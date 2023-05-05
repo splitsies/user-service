@@ -1,5 +1,9 @@
 import type { AWS } from '@serverless/typescript';
 
+import create from '@functions/create';
+
+import dbConfig from 'src/config/db.config.json';
+
 const serverlessConfiguration: AWS = {
     org: 'splitsies',
     app: 'user-service',
@@ -9,17 +13,19 @@ const serverlessConfiguration: AWS = {
     provider: {
         name: 'aws',
         runtime: 'nodejs14.x',
+        stage: 'dev-pr',
         apiGateway: {
         minimumCompressionSize: 1024,
         shouldStartNameWithService: true,
         },
         environment: {
-        AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-        NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+            AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+            NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+            ...dbConfig
         },
     },
     // import the function via paths
-    functions: {  },
+    functions: { create },
     package: { individually: true },
     custom: {
         esbuild: {
