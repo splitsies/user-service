@@ -13,6 +13,9 @@ const mapper = container.get<IUserMapper>(IUserMapper);
 
 export const main = middyfy(
     SplitsiesFunctionHandlerFactory.create<typeof schema, IUserDto>(logger, async (event) => {
+
+        if (!event.body.user) return new DataResponse(HttpStatusCode.BAD_REQUEST, "'user' was missing");
+
         try {
             const result = await userService.createUser(event.body.user as IUserDto);
             return new DataResponse(HttpStatusCode.CREATED, mapper.toDtoModel(result)).toJson();
@@ -23,5 +26,5 @@ export const main = middyfy(
 
             throw e;
         }
-    })
+    }),
 );
