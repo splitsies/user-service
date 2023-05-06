@@ -7,3 +7,6 @@ jspm_packages
 
 # esbuild directories
 .esbuild
+
+# local-db
+**/local-db/docker/**
