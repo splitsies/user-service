@@ -4,15 +4,15 @@ export default {
         user: {
             type: "object",
             properties: {
-                id: { type: "string" },
                 givenName: { type: "string" },
+                password: { type: "string" },
                 familyName: { type: "string" },
                 email: { type: "string" },
                 phoneNumber: { type: "string" },
                 dateOfBirth: { type: "string" },
                 middleName: { type: "string" },
             },
-            required: ["id", "givenName", "familyName", "email", "phoneNumber", "dateOfBirth", "middleName"],
+            required: ["password", "givenName", "familyName", "email", "phoneNumber", "dateOfBirth"],
         },
     },
 } as const;

@@ -12,6 +12,12 @@ import { IUserManager } from "src/managers/user-manager/user-manager-interface";
 import { UserManager } from "src/managers/user-manager/user-manager";
 import { IDbConfiguration } from "src/models/configuration/db/db-configuration-interface";
 import { DbConfiguration } from "src/models/configuration/db/db-configuration";
+import { IFirebaseConfiguration } from "src/models/configuration/firebase/firebase-configuration-interface";
+import { FirebaseConfiguration } from "src/models/configuration/firebase/firebase-configuration";
+import { ICreateUserAction } from "src/actions/create-user-action-interface";
+import { CreateUserAction } from "src/actions/create-user-action";
+import { AuthProvider } from "src/providers/auth-provider";
+import { IAuthProvider } from "src/providers/auth-provider-interface";
 const container = new Container();
 
 container.bind<ILogger>(ILogger).to(Logger).inSingletonScope();
@@ -23,5 +29,10 @@ container.bind<IUserDao>(IUserDao).to(UserDao).inSingletonScope();
 container.bind<IUserMapper>(IUserMapper).to(UserMapper).inSingletonScope();
 
 container.bind<IDbConfiguration>(IDbConfiguration).to(DbConfiguration).inSingletonScope();
+container.bind<IFirebaseConfiguration>(IFirebaseConfiguration).to(FirebaseConfiguration).inSingletonScope();
+
+container.bind<ICreateUserAction>(ICreateUserAction).to(CreateUserAction);
+
+container.bind<IAuthProvider>(IAuthProvider).to(AuthProvider).inSingletonScope();
 
 export { container };
