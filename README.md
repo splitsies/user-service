@@ -20,6 +20,21 @@ Depending on your preferred package manager, follow the instructions below to de
 - Run `yarn` to install the project dependencies
 - Run `yarn sls deploy` to deploy this stack to AWS
 
+## Firebase
+For local development, the app is configured to connect to a local firebase auth emulator. To set up this emulator, install and configure `firebase-tools` (`npm install -g firebase-tools`).
+1. Login to your firebase account with `firebase login`
+1. Initialize to the `splitsies` project with `firebase init`
+1. Install the `auth` emulator via the on-screen prompts
+
+Make sure to use the default port 9099 for the auth emulator. Once that is configured, use the `npm run start-auth` to host the local auth server before running the service.
+
+## Querying the local database
+Once the local DB instance is up and running (`npm run recreate-db && npm run start-db`), the DB can be queried given that your `aws cli` is configured.
+
+```
+aws dynamodb --endpoint-url http://localhost:9000 execute-statement --statement 'SELECT * FROM "Splitsies-User-local"'
+```
+
 ## Test your service
 
 This template contains a single lambda function triggered by an HTTP request made on the provisioned API Gateway REST API `/hello` route with `POST` method. The request body must be provided as `application/json`. The body structure is tested by API Gateway against `src/functions/hello/schema.ts` JSON-Schema definition: it must contain the `name` property.
