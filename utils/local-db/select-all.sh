@@ -1,0 +1,1 @@
+aws dynamodb --endpoint-url http://localhost:9000 execute-statement --statement 'SELECT * FROM "Splitsies-User-local"'

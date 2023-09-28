@@ -11,7 +11,8 @@
     "start-auth": "firebase emulators:start --only auth",
     "start-db": "cd utils/local-db && docker-compose -p splitsies-user-db up",
     "recreate-db": "./utils/local-db/recreate.sh",
-    "kill-db": "docker kill splitsies-expense-db-local"
+    "kill-db": "docker kill splitsies-expense-db-local",
+    "select-all": "./utils/local-db/select-all.sh"
   },
   "engines": {
     "node": ">=14.15.0"
@@ -21,8 +22,8 @@
     "@middy/core": "^3.4.0",
     "@middy/http-json-body-parser": "^3.4.0",
     "@splitsies/formatting": "^1.0.0",
-    "@splitsies/shared-models": "0.0.13",
-    "@splitsies/utils": "0.0.17",
+    "@splitsies/shared-models": "^0.0.14",
+    "@splitsies/utils": "^0.0.18",
     "firebase": "^10.4.0",
     "inversify": "6.0.1",
     "mathjs": "^11.8.0",

@@ -8,6 +8,10 @@ import { CreateUserRequest } from "@splitsies/shared-models";
 export class UserService implements IUserService {
     constructor(@inject(IUserManager) private readonly _userManager: IUserManager) {}
 
+    async getUser(id: string): Promise<IUser> {
+        return await this._userManager.getUser(id);
+    }
+
     async createUser(userModel: CreateUserRequest): Promise<IUser> {
         return await this._userManager.createUser(userModel);
     }
