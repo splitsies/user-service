@@ -24,8 +24,7 @@ export class CreateUserAction implements ICreateUserAction {
 
         try {
             userCred = await createUserWithEmailAndPassword(auth, userModel.email, userModel.password);
-            const user = this.userMapper.toDomainModel({ ...userModel, id: userCred.user.uid });
-            this.userDao.create(user);
+            const user = await this.userDao.create(this.userMapper.toDomainModel({ ...userModel, id: userCred.user.uid }));
             createdAppUser = true;
             return user;
         } catch (ex) {
