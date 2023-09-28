@@ -7,7 +7,6 @@ import { IUserMapper } from "src/mappers/user-mapper/user-mapper-interface";
 import { IUser } from "src/models/user/user-interface";
 import { CreateUserRequest } from "@splitsies/shared-models";
 import { IAuthProvider } from "src/providers/auth-provider-interface";
-import { FirebaseError } from "firebase/app";
 
 @injectable()
 export class CreateUserAction implements ICreateUserAction {
@@ -20,7 +19,6 @@ export class CreateUserAction implements ICreateUserAction {
 
     async run(userModel: CreateUserRequest): Promise<IUser> {
         const auth = this.authProvider.provide();
-        let userId = "";
         let createdAppUser = false;
         let userCred: UserCredential = undefined;
 
