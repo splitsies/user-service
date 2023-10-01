@@ -3,14 +3,7 @@ import { IUserAuthentication } from "src/models/user-authentication/user-authent
 
 export interface IAuthInteractor {
     create(userModel: CreateUserRequest): Promise<IUserAuthentication>;
-
-    /**
-     * Authenticates a user via username and password and returns the user id
-     * @param username
-     * @param password
-     */
     authenticate(username: string, password: string): Promise<IUserAuthentication>;
-
     delete(userId: string): Promise<void>;
 }
 
