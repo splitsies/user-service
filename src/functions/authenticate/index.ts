@@ -1,4 +1,5 @@
 import { handlerPath } from "../../libs/handler-resolver";
+import schema from "./schema";
 
 export default {
     handler: `${handlerPath(__dirname)}/handler.main`,
@@ -6,13 +7,11 @@ export default {
     events: [
         {
             http: {
-                method: "get",
-                path: "users/{id}",
+                method: "post",
+                path: "users/auth",
                 request: {
-                    parameters: {
-                        paths: {
-                            id: true,
-                        },
+                    schemas: {
+                        "application/json": schema,
                     },
                 },
             },

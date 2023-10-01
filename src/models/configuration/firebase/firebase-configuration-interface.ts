@@ -8,6 +8,7 @@ export interface IFirebaseConfiguration {
     readonly measurementId: string;
     readonly devMode: boolean;
     readonly emulatorHost: string;
+    readonly authTokenTtlMs: number;
 }
 
 export const IFirebaseConfiguration = Symbol.for("IFirebaseConfiguration");

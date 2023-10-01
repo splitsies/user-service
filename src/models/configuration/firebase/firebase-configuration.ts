@@ -13,6 +13,7 @@ export class FirebaseConfiguration implements IFirebaseConfiguration {
     readonly measurementId: string;
     readonly devMode: boolean;
     readonly emulatorHost: string;
+    readonly authTokenTtlMs: number;
 
     constructor() {
         assert(!!process.env.FIREBASE_API_KEY, "FIREBASE_API_KEY was undefined");
@@ -23,7 +24,7 @@ export class FirebaseConfiguration implements IFirebaseConfiguration {
         assert(!!process.env.FIREBASE_APP_ID, "FIREBASE_APP_ID was undefined");
         assert(!!process.env.FIREBASE_MEASUREMENT_ID, "FIREBASE_MEASUREMENT_ID was undefined");
         assert(!!process.env.FIREBASE_DEV_MODE, "FIREBASE_DEV_MODE was undefined");
-        assert(!!process.env.FIREBASE_EMULATOR_HOST, "FIREBASE_EMULATOR_HOST was undefined");
+        assert(!!process.env.FIREBASE_AUTH_TOKEN_TTL_MS, "FIREBASE_AUTH_TOKEN_TTL_MS was undefined");
 
         this.apiKey = process.env.FIREBASE_API_KEY;
         this.authDomain = process.env.FIREBASE_AUTH_DOMAIN;
@@ -32,8 +33,8 @@ export class FirebaseConfiguration implements IFirebaseConfiguration {
         this.messagingSenderId = process.env.FIREBASE_MESSAGING_SENDER_ID;
         this.appId = process.env.FIREBASE_APP_ID;
         this.measurementId = process.env.FIREBASE_MEASUREMENT_ID;
-        console.log(process.env.FIREBASE_DEV_MODE);
         this.devMode = process.env.FIREBASE_DEV_MODE === "true";
         this.emulatorHost = process.env.FIREBASE_EMULATOR_HOST;
+        this.authTokenTtlMs = parseInt(process.env.FIREBASE_AUTH_TOKEN_TTL_MS)
     }
 }
