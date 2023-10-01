@@ -34,7 +34,7 @@ export class AuthInteractor implements IAuthInteractor {
             
         } catch (ex) {
             this.logger.error(ex);
-            throw ex;
+            throw new InvalidAuthError();
         }
     }
 
