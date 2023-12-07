@@ -8,14 +8,7 @@ export default {
             http: {
                 method: "get",
                 path: "users",
-                request: {
-                    parameters: {
-                        paths: {
-                            id: true,
-                        },
-                    },
-                },
-            },
+            }
         },
     ],
 };
