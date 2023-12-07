@@ -3,6 +3,8 @@ import type { AWS } from '@serverless/typescript';
 import create from '@functions/create';
 import getById from '@functions/getById';
 import authenticate from '@functions/authenticate';
+import findUsers from "@functions/get";
+import createGuestUser from "@functions/create-guest-user";
 
 import dbConfig from 'src/config/db.config.json';
 import firebaseConfig from 'src/config/firebase.config.json';
@@ -29,7 +31,7 @@ const serverlessConfiguration: AWS = {
         },
     },
     // import the function via paths
-    functions: { create, getById, authenticate },
+    functions: { create, getById, authenticate, findUsers, createGuestUser },
     package: { individually: true },
     custom: {
         esbuild: {

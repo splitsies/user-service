@@ -35,6 +35,6 @@ export class FirebaseConfiguration implements IFirebaseConfiguration {
         this.measurementId = process.env.FIREBASE_MEASUREMENT_ID;
         this.devMode = process.env.FIREBASE_DEV_MODE === "true";
         this.emulatorHost = process.env.FIREBASE_EMULATOR_HOST;
-        this.authTokenTtlMs = parseInt(process.env.FIREBASE_AUTH_TOKEN_TTL_MS)
+        this.authTokenTtlMs = parseInt(process.env.FIREBASE_AUTH_TOKEN_TTL_MS);
     }
 }

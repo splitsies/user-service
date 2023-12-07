@@ -22,7 +22,7 @@
     "@middy/core": "^3.4.0",
     "@middy/http-json-body-parser": "^3.4.0",
     "@splitsies/formatting": "^1.0.0",
-    "@splitsies/shared-models": "0.0.15",
+    "@splitsies/shared-models": "^0.0.17",
     "@splitsies/utils": "^0.0.18",
     "firebase": "^10.4.0",
     "firebase-admin": "^11.11.0",

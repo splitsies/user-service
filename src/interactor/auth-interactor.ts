@@ -16,22 +16,17 @@ export class AuthInteractor implements IAuthInteractor {
         @inject(ILogger) private readonly logger: ILogger,
         @inject(IAuthProvider) private readonly authProvider: IAuthProvider,
         @inject(IAdminAuthProvider) private readonly adminAuthProvider: IAdminAuthProvider,
-        @inject(IFirebaseConfiguration) private readonly firebaseConfig: IFirebaseConfiguration
+        @inject(IFirebaseConfiguration) private readonly firebaseConfig: IFirebaseConfiguration,
     ) {}
 
     async create(userModel: CreateUserRequest): Promise<IUserAuthentication> {
         try {
             const auth = this.authProvider.provide();
-            
+
             const userCred = await createUserWithEmailAndPassword(auth, userModel.email, userModel.password);
             const expiresAt = Date.now() + this.firebaseConfig.authTokenTtlMs;
 
-            return new UserAuthentication(
-                userCred.user.uid,
-                await userCred.user.getIdToken(),
-                expiresAt
-            );
-            
+            return new UserAuthentication(userCred.user.uid, await userCred.user.getIdToken(), expiresAt);
         } catch (ex) {
             this.logger.error(ex);
             throw new InvalidAuthError();

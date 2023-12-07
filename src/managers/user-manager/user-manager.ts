@@ -6,6 +6,9 @@ import { CreateUserRequest, IUserCredential, InvalidArgumentsError, UserCredenti
 import { IAuthInteractor } from "src/interactor/auth-interactor-interface";
 import { IUserDao } from "src/dao/user-dao/user-dao-interface";
 import { IUserMapper } from "src/mappers/user-mapper/user-mapper-interface";
+import { IUserSearchCriteria } from "src/models/user-search-criteria/user-search-criteria-interface";
+import { randomUUID } from "crypto";
+import { User } from "src/models/user/user";
 
 @injectable()
 export class UserManager implements IUserManager {
@@ -21,7 +24,7 @@ export class UserManager implements IUserManager {
     }
 
     async createUser(userModel: CreateUserRequest): Promise<IUserCredential> {
-        let userId = '';
+        let userId = "";
         try {
             const userAuth = await this._authInteractor.create(userModel);
             userId = userAuth.userId;
@@ -48,5 +51,19 @@ export class UserManager implements IUserManager {
         const userAuth = await this._authInteractor.authenticate(username, password);
         const user = await this.getUser(userAuth.userId);
         return new UserCredential(this._userMapper.toDtoModel(user), userAuth.authToken, userAuth.expiresAt);
+    }
+
+    findUsers(searchCriteria: IUserSearchCriteria): Promise<IUser[]> {
+        return this._userDao.findUsers(searchCriteria);
+    }
+
+    findUsersById(ids: string[]): Promise<IUser[]> {
+        return this._userDao.findUsersById(ids);
+    }
+
+    async addGuestUser(givenName: string): Promise<IUser> {
+        const id = `$@splitsies-guest${randomUUID}`;
+        const user = new User(id, givenName, "", "", "", new Date());
+        return await this._userDao.create(user);
     }
 }

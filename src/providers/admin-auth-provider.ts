@@ -17,7 +17,7 @@ export class AdminAuthProvider implements IAdminAuthProvider {
         logger.log(
             `Creating admin auth provider connected to ${firebaseConfig.devMode ? "emulator" : "firebase server"}`,
         );
-        
+
         const firebaseApp = initializeApp(firebaseConfig);
         this.auth = getAuth(firebaseApp);
     }
