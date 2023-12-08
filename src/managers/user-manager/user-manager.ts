@@ -53,8 +53,33 @@ export class UserManager implements IUserManager {
         return new UserCredential(this._userMapper.toDtoModel(user), userAuth.authToken, userAuth.expiresAt);
     }
 
-    findUsers(searchCriteria: IUserSearchCriteria): Promise<IUser[]> {
-        return this._userDao.findUsers(searchCriteria);
+    async findUsers(searchCriteria: IUserSearchCriteria): Promise<IUser[]> {
+        const users = await this._userDao.findUsers(searchCriteria);
+        if (users.length === 0) return users;
+
+        // if there's multiple users with the same phone number, return the registered one
+        users.sort((a, b) => a.phoneNumber > b.phoneNumber ? 1 : a.phoneNumber < b.phoneNumber ? -1 : 0);
+        let current: IUser = users[0];
+
+        const usersList: IUser[] = [];
+
+        if (current.id.startsWith("@splitsies-guest")
+            && (users[1] && users[1].phoneNumber !== current.phoneNumber)
+            || !users[1]) {
+            usersList.push(current);
+        }
+
+        for (let x = 1; x < users.length; x++) {
+            if (current.phoneNumber === users[x].phoneNumber) {
+                usersList.push(current.id.startsWith("@splitsies-guest") ? current : users[x]);
+                continue;
+            } else {
+                usersList.push(users[x]);
+            }
+            current = users[x];
+        }
+
+        return usersList;
     }
 
     findUsersById(ids: string[]): Promise<IUser[]> {
