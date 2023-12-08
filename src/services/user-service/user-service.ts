@@ -29,7 +29,7 @@ export class UserService implements IUserService {
         return await this._userManager.findUsersById(ids);
     }
 
-    async addGuestUser(givenName: string): Promise<IUser> {
-        return await this._userManager.addGuestUser(givenName);
+    async addGuestUser(givenName: string, familyName: string, phoneNumber: string): Promise<IUser> {
+        return await this._userManager.addGuestUser(givenName, familyName, phoneNumber);
     }
 }

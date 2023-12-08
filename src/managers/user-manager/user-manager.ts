@@ -61,9 +61,9 @@ export class UserManager implements IUserManager {
         return this._userDao.findUsersById(ids);
     }
 
-    async addGuestUser(givenName: string): Promise<IUser> {
-        const id = `$@splitsies-guest${randomUUID}`;
-        const user = new User(id, givenName, "", "", "", new Date());
+    async addGuestUser(givenName: string, familyName: string, phoneNumber: string): Promise<IUser> {
+        const id = `@splitsies-guest${randomUUID()}`;
+        const user = new User(id, givenName, familyName, "", phoneNumber, new Date(), "");
         return await this._userDao.create(user);
     }
 }
