@@ -12,10 +12,9 @@ const userService = container.get<IUserService>(IUserService);
 
 export const main = middyfy(
     SplitsiesFunctionHandlerFactory.create<typeof schema, IUser>(logger, async (event) => {
-        if (!event.body.givenName) return new DataResponse(HttpStatusCode.BAD_REQUEST, "'givenName' was missing");
-
         try {
-            const result = await userService.addGuestUser(event.body.givenName);
+            const { givenName, phoneNumber, familyName } = event.body;
+            const result = await userService.addGuestUser(givenName, familyName, phoneNumber);
             return new DataResponse(HttpStatusCode.CREATED, result).toJson();
         } catch (e) {
             if (e instanceof InvalidAuthError) {

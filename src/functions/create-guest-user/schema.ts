@@ -2,7 +2,8 @@ export default {
     type: "object",
     properties: {
         givenName: { type: "string" },
-        famiylName: { type: "string" },
+        familyName: { type: "string" },
+        phoneNumber: { type: "string" },
     },
-    required: ["givenName", "familyName"],
+    required: ["givenName", "familyName", "phoneNumber"],
 } as const;

@@ -8,7 +8,7 @@ export default {
             http: {
                 method: "get",
                 path: "users",
-            }
+            },
         },
     ],
 };

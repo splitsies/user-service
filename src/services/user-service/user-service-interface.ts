@@ -8,6 +8,6 @@ export interface IUserService {
     authenticateUser(username: string, password: string): Promise<IUserCredential>;
     findUsers(searchCriteria: IUserSearchCriteria): Promise<IUser[]>;
     findUsersById(ids: string[]): Promise<IUser[]>;
-    addGuestUser(givenName: string): Promise<IUser>;
+    addGuestUser(givenName: string, familyName: string, phoneNumber: string): Promise<IUser>;
 }
 export const IUserService = Symbol.for("IUserService");
