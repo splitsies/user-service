@@ -20,7 +20,12 @@ export const main = middyfy(
         if (!event.body.user) return new DataResponse(HttpStatusCode.BAD_REQUEST, "'user' was missing");
 
         try {
-            const result = await userService.createUser(event.body.user as CreateUserRequest);
+            const createRequest = {
+                ...event.body.user,
+                middleName: event.body.user ?? ""
+            } as CreateUserRequest;
+
+            const result = await userService.createUser(createRequest);
             return new DataResponse(HttpStatusCode.CREATED, result).toJson();
         } catch (e) {
             if (e instanceof InvalidAuthError) {
