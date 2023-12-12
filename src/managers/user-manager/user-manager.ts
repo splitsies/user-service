@@ -33,6 +33,7 @@ export class UserManager implements IUserManager {
             );
             return new UserCredential(this._userMapper.toDtoModel(user), userAuth.authToken, userAuth.expiresAt);
         } catch (e) {
+            this._logger.error(e);
             if (userId) {
                 await this._authInteractor.delete(userId);
                 this._logger.log(`Rolled back creation of user ${userId}`);
