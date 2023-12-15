@@ -22,7 +22,7 @@ export const main = middyfy(
         try {
             const createRequest = {
                 ...event.body.user,
-                middleName: event.body.user ?? ""
+                middleName: event.body.user.middleName ?? "",
             } as CreateUserRequest;
 
             const result = await userService.createUser(createRequest);

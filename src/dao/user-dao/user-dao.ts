@@ -12,6 +12,7 @@ import { unmarshall } from "@aws-sdk/util-dynamodb";
 
 @injectable()
 export class UserDao extends DaoBase<IUser, IUserDto> implements IUserDao {
+    private readonly _chunkSize = 100;
     constructor(
         @inject(ILogger) logger: ILogger,
         @inject(IDbConfiguration) dbConfiguration: IDbConfiguration,
@@ -23,32 +24,55 @@ export class UserDao extends DaoBase<IUser, IUserDto> implements IUserDao {
     }
 
     async findUsers(searchCriteria: IUserSearchCriteria): Promise<IUser[]> {
-        const placeholders = `[${searchCriteria.phoneNumbers.map((_) => "?").join(",")}]`;
-        const statement = this._userDaoStatements.search.replace("?", placeholders);
-        const result = await this._client.send(
-            new ExecuteStatementCommand({
-                Statement: statement,
-                Parameters: searchCriteria.phoneNumbers.map((n) => ({ S: n })),
-            }),
-        );
+        // can't have more than 100 in a single query
+        const chunks: string[][] = [];
 
-        return result.Items?.length
-            ? result.Items.map((i) => this._mapper.toDomainModel(unmarshall(i) as IUserDto))
-            : [];
+        for (let i = 0; i < searchCriteria.phoneNumbers.length; i += this._chunkSize) {
+            chunks.push(searchCriteria.phoneNumbers.slice(i, i + this._chunkSize));
+        }
+
+        const users: IUser[] = [];
+        for (const chunk of chunks) {
+            const placeholders = `[${chunk.map((_) => "?").join(",")}]`;
+            const statement = this._userDaoStatements.search.replace("?", placeholders);
+            const result = await this._client.send(
+                new ExecuteStatementCommand({
+                    Statement: statement,
+                    Parameters: chunk.map((n) => ({ S: n.slice(-10) })), // use the last 10 digits (ignore country code)
+                }),
+            );
+
+            if (result.Items?.length) {
+                users.push(...result.Items.map((i) => this._mapper.toDomainModel(unmarshall(i) as IUserDto)));
+            }
+        }
+
+        return users;
     }
 
     async findUsersById(ids: string[]): Promise<IUser[]> {
-        const placeholders = `[${ids.map((_) => "?").join(",")}]`;
-        const statement = this._userDaoStatements.idSearch.replace("?", placeholders);
-        const result = await this._client.send(
-            new ExecuteStatementCommand({
-                Statement: statement,
-                Parameters: ids.map((n) => ({ S: n })),
-            }),
-        );
+        const chunks: string[][] = [];
 
-        return result.Items?.length
-            ? result.Items.map((i) => this._mapper.toDomainModel(unmarshall(i) as IUserDto))
-            : [];
+        for (let i = 0; i < ids.length; i += this._chunkSize) {
+            chunks.push(ids.slice(i, i + this._chunkSize));
+        }
+
+        const users: IUser[] = [];
+        for (const chunk of chunks) {
+            const placeholders = `[${chunk.map((_) => "?").join(",")}]`;
+            const statement = this._userDaoStatements.idSearch.replace("?", placeholders);
+            const result = await this._client.send(
+                new ExecuteStatementCommand({
+                    Statement: statement,
+                    Parameters: chunk.map((n) => ({ S: n })),
+                }),
+            );
+
+            if (result.Items?.length) {
+                users.push(...result.Items.map((i) => this._mapper.toDomainModel(unmarshall(i) as IUserDto)));
+            }
+        }
+
+        return users;
     }
 }

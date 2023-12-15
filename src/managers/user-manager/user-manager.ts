@@ -59,14 +59,15 @@ export class UserManager implements IUserManager {
         if (users.length === 0) return users;
 
         // if there's multiple users with the same phone number, return the registered one
-        users.sort((a, b) => a.phoneNumber > b.phoneNumber ? 1 : a.phoneNumber < b.phoneNumber ? -1 : 0);
+        users.sort((a, b) => (a.phoneNumber > b.phoneNumber ? 1 : a.phoneNumber < b.phoneNumber ? -1 : 0));
         let current: IUser = users[0];
 
         const usersList: IUser[] = [];
 
-        if (current.id.startsWith("@splitsies-guest")
-            && (users[1] && users[1].phoneNumber !== current.phoneNumber)
-            || !users[1]) {
+        if (
+            (current.id.startsWith("@splitsies-guest") && users[1] && users[1].phoneNumber !== current.phoneNumber) ||
+            !users[1]
+        ) {
             usersList.push(current);
         }
 
