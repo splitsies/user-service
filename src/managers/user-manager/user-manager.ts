@@ -9,6 +9,7 @@ import { IUserMapper } from "src/mappers/user-mapper/user-mapper-interface";
 import { IUserSearchCriteria } from "src/models/user-search-criteria/user-search-criteria-interface";
 import { randomUUID } from "crypto";
 import { User } from "src/models/user/user";
+import { InvalidFormatError } from "src/models/errors";
 
 @injectable()
 export class UserManager implements IUserManager {
@@ -25,11 +26,21 @@ export class UserManager implements IUserManager {
 
     async createUser(userModel: CreateUserRequest): Promise<IUserCredential> {
         let userId = "";
+
+        if (userModel.phoneNumber && !this.validatePhoneNumber(userModel.phoneNumber)) {
+            throw new InvalidFormatError("Phone number was invalid");
+        }
+
+        const userWithFormattedNumber = {
+            ...userModel,
+            phoneNumber: userModel.phoneNumber.replace(/\D/g, ""),
+        } as CreateUserRequest;
+
         try {
-            const userAuth = await this._authInteractor.create(userModel);
+            const userAuth = await this._authInteractor.create(userWithFormattedNumber);
             userId = userAuth.userId;
             const user = await this._userDao.create(
-                this._userMapper.toDomainModel({ ...userModel, id: userAuth.userId }),
+                this._userMapper.toDomainModel({ ...userWithFormattedNumber, id: userAuth.userId }),
             );
             return new UserCredential(this._userMapper.toDtoModel(user), userAuth.authToken, userAuth.expiresAt);
         } catch (e) {
@@ -92,5 +103,10 @@ export class UserManager implements IUserManager {
         const id = `@splitsies-guest${randomUUID()}`;
         const user = new User(id, givenName, familyName, "", phoneNumber, new Date(), "");
         return await this._userDao.create(user);
+    }
+
+    private validatePhoneNumber(phoneNumber: string): boolean {
+        const re = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/;
+        return re.test(phoneNumber);
     }
 }

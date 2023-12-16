@@ -10,7 +10,7 @@ import {
 } from "@splitsies/shared-models";
 import { SplitsiesFunctionHandlerFactory, ILogger } from "@splitsies/utils";
 import { IUserService } from "src/services/user-service/user-service-interface";
-import { InvalidAuthError } from "src/models/errors";
+import { InvalidAuthError, InvalidFormatError } from "src/models/errors";
 
 const logger = container.get<ILogger>(ILogger);
 const userService = container.get<IUserService>(IUserService);
@@ -34,6 +34,10 @@ export const main = middyfy(
 
             if (e instanceof InvalidArgumentsError) {
                 return new DataResponse(HttpStatusCode.BAD_REQUEST, e.message).toJson();
+            }
+
+            if (e instanceof InvalidFormatError) {
+                return new DataResponse(HttpStatusCode.BAD_REQUEST, "Invalid request parameters").toJson();
             }
 
             throw e;
