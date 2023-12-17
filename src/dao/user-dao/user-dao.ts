@@ -27,8 +27,14 @@ export class UserDao extends DaoBase<IUser, IUserDto> implements IUserDao {
         // can't have more than 100 in a single query
         const chunks: string[][] = [];
 
-        for (let i = 0; i < searchCriteria.phoneNumbers.length; i += this._chunkSize) {
-            chunks.push(searchCriteria.phoneNumbers.slice(i, i + this._chunkSize));
+        const uniqueNumbers = searchCriteria.phoneNumbers.reduce(
+            (included: string[], currentNumber: string) =>
+                included.includes(currentNumber.slice(-10)) ? included : [...included, currentNumber.slice(-10)],
+            [],
+        );
+
+        for (let i = 0; i < uniqueNumbers.length; i += this._chunkSize) {
+            chunks.push(uniqueNumbers.slice(i, i + this._chunkSize));
         }
 
         const users: IUser[] = [];
