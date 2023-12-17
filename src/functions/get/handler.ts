@@ -13,7 +13,7 @@ const userService = container.get<IUserService>(IUserService);
 const mapper = container.get<IUserMapper>(IUserMapper);
 
 export const main = middyfy(
-    SplitsiesFunctionHandlerFactory.create<typeof schema, IUserDto>(logger, async (event) => {
+    SplitsiesFunctionHandlerFactory.create<typeof schema, IUserDto[]>(logger, async (event) => {
         if (event.queryStringParameters.ids) {
             const ids = event.queryStringParameters.ids.split(",");
             const result = await userService.findUsersById(ids);
@@ -38,6 +38,6 @@ export const main = middyfy(
                 : new DataResponse(HttpStatusCode.NOT_FOUND, undefined).toJson();
         }
 
-        return new DataResponse(HttpStatusCode.BAD_REQUEST, "No search parameters provided");
+        return new DataResponse(HttpStatusCode.OK, []).toJson();
     }),
 );
