@@ -47,6 +47,8 @@ export class UserDao extends DaoBase<IUser, IUserDto> implements IUserDao {
             }
         }
 
+        console.log(JSON.stringify({ users }, null, 2));
+
         return users;
     }
 
