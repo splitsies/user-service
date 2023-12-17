@@ -28,10 +28,10 @@ export class UserDao extends DaoBase<IUser, IUserDto> implements IUserDao {
         const chunks: string[][] = [];
 
         const uniqueNumbers = searchCriteria.phoneNumbers.reduce(
-            (included: string[], currentNumber: string) => included.includes(currentNumber.slice(-10))
-                ? included
-                : [...included, currentNumber.slice(-10)],
-            []);
+            (included: string[], currentNumber: string) =>
+                included.includes(currentNumber.slice(-10)) ? included : [...included, currentNumber.slice(-10)],
+            [],
+        );
 
         for (let i = 0; i < uniqueNumbers.length; i += this._chunkSize) {
             chunks.push(uniqueNumbers.slice(i, i + this._chunkSize));
@@ -52,8 +52,6 @@ export class UserDao extends DaoBase<IUser, IUserDto> implements IUserDao {
                 users.push(...result.Items.map((i) => this._mapper.toDomainModel(unmarshall(i) as IUserDto)));
             }
         }
-
-        console.log(JSON.stringify({ users }, null, 2));
 
         return users;
     }
