@@ -47,8 +47,7 @@ const serverlessConfiguration: AWS = {
         "serverless-offline": {
             httpPort: 6001,
             websocketPort: 6002,
-            lambdaPort: 6003,
-            host: "0.0.0.0"
+            lambdaPort: 6003
         }
     },
 };
