@@ -69,30 +69,22 @@ export class UserManager implements IUserManager {
         const users = await this._userDao.findUsers(searchCriteria);
         if (users.length === 0) return users;
 
-        // if there's multiple users with the same phone number, return the registered one
-        users.sort((a, b) => (a.phoneNumber > b.phoneNumber ? 1 : a.phoneNumber < b.phoneNumber ? -1 : 0));
-        let current: IUser = users[0];
+        const usersByPhoneNumber = new Map<string, IUser[]>();
+        users.forEach(u => {
+            usersByPhoneNumber.set(u.phoneNumber, [...(usersByPhoneNumber.get(u.phoneNumber) ?? []), u]);
+        });
 
-        const usersList: IUser[] = [];
-
-        if (
-            (current.id.startsWith("@splitsies-guest") && users[1] && users[1].phoneNumber !== current.phoneNumber) ||
-            !users[1]
-        ) {
-            usersList.push(current);
+        const list = [];
+        for (const number of usersByPhoneNumber.keys()) {
+            const usersWithNumber = usersByPhoneNumber.get(number);
+            list.push(...(
+                usersWithNumber.length === 1
+                    ? usersWithNumber
+                    : usersWithNumber.filter(u => !u.id.startsWith("@splitsies-guest"))
+            ));
         }
 
-        for (let x = 1; x < users.length; x++) {
-            if (current.phoneNumber === users[x].phoneNumber) {
-                usersList.push(current.id.startsWith("@splitsies-guest") ? current : users[x]);
-                continue;
-            } else {
-                usersList.push(users[x]);
-            }
-            current = users[x];
-        }
-
-        return usersList;
+        return list;
     }
 
     findUsersById(ids: string[]): Promise<IUser[]> {
