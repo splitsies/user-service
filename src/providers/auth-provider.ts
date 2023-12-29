@@ -13,9 +13,7 @@ export class AuthProvider implements IAuthProvider {
         @inject(ILogger) logger: ILogger,
         @inject(IFirebaseConfiguration) firebaseConfig: IFirebaseConfiguration,
     ) {
-        logger.log(firebaseConfig);
         if (!firebaseConfig.devMode) {
-            logger.log("Creating server auth");
             const firebaseApp = initializeApp(firebaseConfig);
             this.auth = getAuth(firebaseApp);
         } else {
