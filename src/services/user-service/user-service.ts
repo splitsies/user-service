@@ -22,8 +22,6 @@ export class UserService implements IUserService {
         const user = await this._userManager.createUser(userModel);
         const deletedGuestIds = await this._userManager.deleteGuestsWithNumber(user.user.phoneNumber);
 
-        console.log({ deletedGuestIds });
-
         await Promise.all(
             deletedGuestIds.map((deletedGuestId) =>
                 this._expenseApiClient.mergeGuestUsers(
