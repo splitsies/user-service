@@ -10,8 +10,7 @@ export class ExpenseApiClient extends SplitsiesApiClientBase implements IExpense
     constructor(
         @inject(ILogger) private readonly _logger: ILogger,
         @inject(IApiConfiguration) private readonly _apiConfiguration: IApiConfiguration,
-
-        @inject(IAuthHeaderProvider) private readonly _authHeaderProvider,
+        @inject(IAuthHeaderProvider) private readonly _authHeaderProvider: IAuthHeaderProvider,
     ) {
         super();
     }
