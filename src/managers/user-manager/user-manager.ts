@@ -10,6 +10,7 @@ import { IUserSearchCriteria } from "src/models/user-search-criteria/user-search
 import { randomUUID } from "crypto";
 import { User } from "src/models/user/user";
 import { InvalidFormatError } from "src/models/errors";
+import { UserSearchCriteria } from "src/models/user-search-criteria/user-search-criteria";
 
 @injectable()
 export class UserManager implements IUserManager {
@@ -42,6 +43,7 @@ export class UserManager implements IUserManager {
             const user = await this._userDao.create(
                 this._userMapper.toDomainModel({ ...userWithFormattedNumber, id: userAuth.userId }),
             );
+
             return new UserCredential(this._userMapper.toDtoModel(user), userAuth.authToken, userAuth.expiresAt);
         } catch (e) {
             this._logger.error(e);
@@ -70,18 +72,18 @@ export class UserManager implements IUserManager {
         if (users.length === 0) return users;
 
         const usersByPhoneNumber = new Map<string, IUser[]>();
-        users.forEach(u => {
+        users.forEach((u) => {
             usersByPhoneNumber.set(u.phoneNumber, [...(usersByPhoneNumber.get(u.phoneNumber) ?? []), u]);
         });
 
         const list = [];
         for (const number of usersByPhoneNumber.keys()) {
             const usersWithNumber = usersByPhoneNumber.get(number);
-            list.push(...(
-                usersWithNumber.length === 1
+            list.push(
+                ...(usersWithNumber.length === 1
                     ? usersWithNumber
-                    : usersWithNumber.filter(u => !u.id.startsWith("@splitsies-guest"))
-            ));
+                    : usersWithNumber.filter((u) => !u.id.startsWith("@splitsies-guest"))),
+            );
         }
 
         return list;
@@ -100,5 +102,18 @@ export class UserManager implements IUserManager {
     private validatePhoneNumber(phoneNumber: string): boolean {
         const re = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/;
         return re.test(phoneNumber);
+    }
+
+    async deleteGuestsWithNumber(phoneNumber: string): Promise<string[]> {
+        if (!phoneNumber) return [];
+        const users = await this._userDao.findUsers(new UserSearchCriteria([phoneNumber]));
+        const filtered = users.filter((u) => u.id.startsWith("@splitsies-guest"));
+
+        if (filtered.length === 0) {
+            return [];
+        }
+
+        await Promise.all(filtered.map((u) => this._userDao.delete({ id: u.id })));
+        return filtered.map((u) => u.id);
     }
 }
