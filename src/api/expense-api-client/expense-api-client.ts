@@ -18,9 +18,7 @@ export class ExpenseApiClient extends SplitsiesApiClientBase implements IExpense
     async mergeGuestUsers(deletedGuestId: string, registeredUser: IExpenseUserDetails): Promise<void> {
         try {
             const url = `${this._apiConfiguration.expenseApiUrl}guests/${encodeURIComponent(deletedGuestId)}`;
-            console.log({ url });
-            const response = await this.putJson(url, { registeredUser }, this._authHeaderProvider.provide());
-            console.log({ response });
+            await this.putJson(url, { registeredUser }, this._authHeaderProvider.provide());
         } catch (e) {
             this._logger.error(e);
         }
