@@ -9,5 +9,6 @@ export interface IUserManager {
     findUsers(searchCriteria: IUserSearchCriteria): Promise<IUser[]>;
     findUsersById(ids: string[]): Promise<IUser[]>;
     addGuestUser(givenName: string, familyName: string, phoneNumber: string): Promise<IUser>;
+    deleteGuestsWithNumber(phoneNumber: string): Promise<string[]>;
 }
 export const IUserManager = Symbol.for("IUserManager");

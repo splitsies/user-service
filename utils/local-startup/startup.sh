@@ -5,4 +5,5 @@ sls offline start \
     --param='DB_REGION=us-west-2' \
     --param='DB_ENDPOINT=http://localhost:9000/' \
     --param='DB_TABLE_NAME=Splitsies-User-local' \
+    --param='EXPENSE_API_URL=http://0.0.0.0:14623/dev-pr/expenses/' \
     --param='FIREBASE_DEV_MODE=true'

@@ -8,6 +8,7 @@ import createGuestUser from "@functions/create-guest-user";
 
 import dbConfig from 'src/config/db.config.json';
 import firebaseConfig from 'src/config/firebase.config.json';
+import apiConfig from 'src/config/api.config.json';
 
 const serverlessConfiguration: AWS = {
     org: 'splitsies',
@@ -27,7 +28,8 @@ const serverlessConfiguration: AWS = {
             AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
             NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
             ...dbConfig,
-            ...firebaseConfig
+            ...firebaseConfig,
+            ...apiConfig
         },
     },
     // import the function via paths
