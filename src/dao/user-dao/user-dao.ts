@@ -29,25 +29,18 @@ export class UserDao extends DaoBase<IUser, IUserDto> implements IUserDao {
         search: string,
         lastKey: Record<string, AttributeValue> | undefined,
     ): Promise<IScanResult<IUser>> {
-        const spaceIndex = search.lastIndexOf(" ");
-        const givenName = search.slice(0, spaceIndex);
-        const familyName = search.slice(spaceIndex + 1);
-
         const result = await this._client.send(
             new ScanCommand({
                 TableName: this.dbConfiguration.tableName,
                 ExclusiveStartKey: lastKey,
-                FilterExpression:
-                    "begins_with(#email, :search) OR (contains(#givenName, :givenName) AND contains(#familyName, :familyName))",
+                FilterExpression: "begins_with(#username, :search) AND NOT begins_with(#id, :guestPrefix)",
                 ExpressionAttributeNames: {
-                    "#email": "email",
-                    "#givenName": "givenName",
-                    "#familyName": "familyName",
+                    "#id": "id",
+                    "#username": "username",
                 },
                 ExpressionAttributeValues: {
-                    ":search": { S: search },
-                    ":givenName": { S: givenName },
-                    ":familyName": { S: familyName },
+                    ":search": { S: search.toLowerCase() },
+                    ":guestPrefix": { S: "@splitsies-guest" },
                 },
             }),
         );

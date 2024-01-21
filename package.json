@@ -1,6 +1,6 @@
 {
   "name": "user-service",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Serverless aws-nodejs-typescript template",
   "main": "serverless.ts",
   "scripts": {
@@ -22,7 +22,7 @@
     "@middy/core": "^3.4.0",
     "@middy/http-json-body-parser": "^3.4.0",
     "@splitsies/formatting": "^1.0.0",
-    "@splitsies/shared-models": "^0.0.22",
+    "@splitsies/shared-models": "^0.0.23",
     "@splitsies/utils": "^0.0.25",
     "firebase": "^10.4.0",
     "firebase-admin": "^11.11.0",
