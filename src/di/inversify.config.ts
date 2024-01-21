@@ -29,6 +29,8 @@ import { ExpenseApiClient } from "src/api/expense-api-client/expense-api-client"
 import { IAuthHeaderProvider } from "src/providers/auth-header-provider/auth-header-provider-interface";
 import { AuthHeaderProvider } from "src/providers/auth-header-provider/auth-header-provider";
 import { ExpenseUserDetailsMapper, IExpenseUserDetailsMapper } from "@splitsies/shared-models";
+import { ICreateUserValidator } from "src/validators/create-user-validator/create-user-validator-interface";
+import { CreateUserValidator } from "src/validators/create-user-validator/create-user-validator";
 const container = new Container();
 
 container.bind<ILogger>(ILogger).to(Logger).inSingletonScope();
@@ -47,5 +49,6 @@ container.bind<IExpenseApiClient>(IExpenseApiClient).to(ExpenseApiClient).inSing
 container.bind<IAuthHeaderProvider>(IAuthHeaderProvider).to(AuthHeaderProvider).inSingletonScope();
 container.bind<IApiKeyConfiguration>(IApiKeyConfiguration).to(ApiKeyConfiguration).inSingletonScope();
 container.bind<IExpenseUserDetailsMapper>(IExpenseUserDetailsMapper).to(ExpenseUserDetailsMapper).inSingletonScope();
+container.bind<ICreateUserValidator>(ICreateUserValidator).to(CreateUserValidator).inSingletonScope();
 
 export { container };

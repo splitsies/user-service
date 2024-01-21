@@ -15,9 +15,9 @@ import { IUserMapper } from "src/mappers/user-mapper/user-mapper-interface";
 import { IUserSearchCriteria } from "src/models/user-search-criteria/user-search-criteria-interface";
 import { randomUUID } from "crypto";
 import { User } from "src/models/user/user";
-import { InvalidFormatError } from "src/models/errors";
 import { UserSearchCriteria } from "src/models/user-search-criteria/user-search-criteria";
 import { AttributeValue } from "@aws-sdk/client-dynamodb/dist-types/models/models_0";
+import { ICreateUserValidator } from "src/validators/create-user-validator/create-user-validator-interface";
 
 @injectable()
 export class UserManager implements IUserManager {
@@ -26,6 +26,7 @@ export class UserManager implements IUserManager {
         @inject(IUserDao) private readonly _userDao: IUserDao,
         @inject(IUserMapper) private readonly _userMapper: IUserMapper,
         @inject(IAuthInteractor) private readonly _authInteractor: IAuthInteractor,
+        @inject(ICreateUserValidator) private readonly _createUserValidator: ICreateUserValidator,
     ) {}
 
     async getUser(id: string): Promise<IUser> {
@@ -33,15 +34,14 @@ export class UserManager implements IUserManager {
     }
 
     async createUser(userModel: CreateUserRequest): Promise<IUserCredential> {
-        let userId = "";
+        await this._createUserValidator.validate(userModel);
 
-        if (userModel.phoneNumber && !this.validatePhoneNumber(userModel.phoneNumber)) {
-            throw new InvalidFormatError("Phone number was invalid");
-        }
+        let userId = "";
 
         const userWithFormattedNumber = {
             ...userModel,
             phoneNumber: userModel.phoneNumber.replace(/\D/g, ""),
+            username: userModel.username.toLowerCase(),
         } as CreateUserRequest;
 
         try {
@@ -75,7 +75,6 @@ export class UserManager implements IUserManager {
     }
 
     async findUsers(searchCriteria: IUserSearchCriteria): Promise<IUser[]> {
-        await this._userDao.findByUsername("kevchen", { id: { S: "Oc2cYC8u4aNhc5lVfYbDQNhQ7bdF" } });
         const users = await this._userDao.findUsers(searchCriteria);
         if (users.length === 0) return users;
 
@@ -102,14 +101,10 @@ export class UserManager implements IUserManager {
     }
 
     async addGuestUser(givenName: string, familyName: string, phoneNumber: string): Promise<IUser> {
-        const id = `@splitsies-guest${randomUUID()}`;
-        const user = new User(id, givenName, familyName, "", phoneNumber, new Date(), "");
+        const guid = randomUUID();
+        const id = `@splitsies-guest${guid}`;
+        const user = new User(id, guid, givenName, familyName, "", phoneNumber, new Date(), "");
         return await this._userDao.create(user);
-    }
-
-    private validatePhoneNumber(phoneNumber: string): boolean {
-        const re = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/;
-        return re.test(phoneNumber);
     }
 
     async deleteGuestsWithNumber(phoneNumber: string): Promise<string[]> {

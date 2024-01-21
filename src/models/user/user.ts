@@ -3,6 +3,7 @@ import { IUser } from "./user-interface";
 export class User implements IUser {
     constructor(
         readonly id: string,
+        readonly username: string,
         readonly givenName: string,
         readonly familyName: string,
         readonly email: string,

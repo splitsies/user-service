@@ -10,6 +10,7 @@ export class UserMapper implements IUserMapper {
     toDtoModel(domainModel: IUser): IUserDto {
         return new UserDto(
             domainModel.id,
+            domainModel.username,
             domainModel.givenName,
             domainModel.familyName,
             domainModel.email,
@@ -22,6 +23,7 @@ export class UserMapper implements IUserMapper {
     toDomainModel(dtoModel: IUserDto): IUser {
         return new User(
             dtoModel.id,
+            dtoModel.username,
             dtoModel.givenName,
             dtoModel.familyName,
             dtoModel.email,
