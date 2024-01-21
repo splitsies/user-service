@@ -2,7 +2,13 @@ import { inject, injectable } from "inversify";
 import { IUserManager } from "./user-manager-interface";
 import { IUser } from "src/models/user/user-interface";
 import { ILogger } from "@splitsies/utils";
-import { CreateUserRequest, IUserCredential, InvalidArgumentsError, UserCredential } from "@splitsies/shared-models";
+import {
+    CreateUserRequest,
+    IScanResult,
+    IUserCredential,
+    InvalidArgumentsError,
+    UserCredential,
+} from "@splitsies/shared-models";
 import { IAuthInteractor } from "src/interactor/auth-interactor-interface";
 import { IUserDao } from "src/dao/user-dao/user-dao-interface";
 import { IUserMapper } from "src/mappers/user-mapper/user-mapper-interface";
@@ -11,6 +17,7 @@ import { randomUUID } from "crypto";
 import { User } from "src/models/user/user";
 import { InvalidFormatError } from "src/models/errors";
 import { UserSearchCriteria } from "src/models/user-search-criteria/user-search-criteria";
+import { AttributeValue } from "@aws-sdk/client-dynamodb/dist-types/models/models_0";
 
 @injectable()
 export class UserManager implements IUserManager {
@@ -68,6 +75,7 @@ export class UserManager implements IUserManager {
     }
 
     async findUsers(searchCriteria: IUserSearchCriteria): Promise<IUser[]> {
+        await this._userDao.findByUsername("kevchen", { id: { S: "Oc2cYC8u4aNhc5lVfYbDQNhQ7bdF" } });
         const users = await this._userDao.findUsers(searchCriteria);
         if (users.length === 0) return users;
 
@@ -115,5 +123,9 @@ export class UserManager implements IUserManager {
 
         await Promise.all(filtered.map((u) => this._userDao.delete({ id: u.id })));
         return filtered.map((u) => u.id);
+    }
+
+    findByUsername(search: string, lastKey: Record<string, AttributeValue> | undefined): Promise<IScanResult<IUser>> {
+        return this._userDao.findByUsername(search, lastKey);
     }
 }

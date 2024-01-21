@@ -2,9 +2,10 @@ import { inject, injectable } from "inversify";
 import { IUserService } from "./user-service-interface";
 import { IUser } from "src/models/user/user-interface";
 import { IUserManager } from "src/managers/user-manager/user-manager-interface";
-import { CreateUserRequest, IExpenseUserDetailsMapper, IUserCredential } from "@splitsies/shared-models";
+import { CreateUserRequest, IExpenseUserDetailsMapper, IScanResult, IUserCredential } from "@splitsies/shared-models";
 import { IUserSearchCriteria } from "src/models/user-search-criteria/user-search-criteria-interface";
 import { IExpenseApiClient } from "src/api/expense-api-client/expense-api-client-interface";
+import { AttributeValue } from "@aws-sdk/client-dynamodb/dist-types/models/models_0";
 
 @injectable()
 export class UserService implements IUserService {
@@ -48,5 +49,9 @@ export class UserService implements IUserService {
 
     async addGuestUser(givenName: string, familyName: string, phoneNumber: string): Promise<IUser> {
         return await this._userManager.addGuestUser(givenName, familyName, phoneNumber);
+    }
+
+    findByUsername(search: string, lastKey: Record<string, AttributeValue> | undefined): Promise<IScanResult<IUser>> {
+        return this._userManager.findByUsername(search, lastKey);
     }
 }
