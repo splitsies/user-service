@@ -7,20 +7,57 @@ import { IUser } from "src/models/user/user-interface";
 import { IUserDao } from "./user-dao-interface";
 import { IUserSearchCriteria } from "src/models/user-search-criteria/user-search-criteria-interface";
 import { IUserDaoStatements } from "./user-dao-statements-interface";
-import { ExecuteStatementCommand } from "@aws-sdk/client-dynamodb";
+import { ExecuteStatementCommand, ScanCommand } from "@aws-sdk/client-dynamodb";
 import { unmarshall } from "@aws-sdk/util-dynamodb";
+import { IScanResult, ScanResult } from "@splitsies/shared-models";
+import { AttributeValue } from "@aws-sdk/client-dynamodb/dist-types/models/models_0";
 
 @injectable()
 export class UserDao extends DaoBase<IUser, IUserDto> implements IUserDao {
     private readonly _chunkSize = 100;
     constructor(
         @inject(ILogger) logger: ILogger,
-        @inject(IDbConfiguration) dbConfiguration: IDbConfiguration,
+        @inject(IDbConfiguration) private dbConfiguration: IDbConfiguration,
         @inject(IUserMapper) mapper: IUserMapper,
         @inject(IUserDaoStatements) private readonly _userDaoStatements: IUserDaoStatements,
     ) {
         const keySelector = (user: IUser) => ({ id: user.id });
         super(logger, dbConfiguration, dbConfiguration.tableName, keySelector, mapper);
+    }
+
+    async findByUsername(
+        search: string,
+        lastKey: Record<string, AttributeValue> | undefined,
+    ): Promise<IScanResult<IUser>> {
+        const spaceIndex = search.lastIndexOf(" ");
+        const givenName = search.slice(0, spaceIndex);
+        const familyName = search.slice(spaceIndex + 1);
+
+        const result = await this._client.send(
+            new ScanCommand({
+                TableName: this.dbConfiguration.tableName,
+                ExclusiveStartKey: lastKey,
+                FilterExpression:
+                    "begins_with(#email, :search) OR (contains(#givenName, :givenName) AND contains(#familyName, :familyName))",
+                ExpressionAttributeNames: {
+                    "#email": "email",
+                    "#givenName": "givenName",
+                    "#familyName": "familyName",
+                },
+                ExpressionAttributeValues: {
+                    ":search": { S: search },
+                    ":givenName": { S: givenName },
+                    ":familyName": { S: familyName },
+                },
+            }),
+        );
+
+        const scan = new ScanResult(
+            result.Items.map((i) => this._mapper.toDomainModel(unmarshall(i) as IUserDto)),
+            result.LastEvaluatedKey ?? null,
+        );
+
+        return scan;
     }
 
     async findUsers(searchCriteria: IUserSearchCriteria): Promise<IUser[]> {
