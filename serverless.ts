@@ -37,14 +37,22 @@ const serverlessConfiguration: AWS = {
     package: { individually: true },
     custom: {
         esbuild: {
-        bundle: true,
-        minify: false,
-        sourcemap: true,
-        exclude: ['aws-sdk'],
-        target: 'node18',
-        define: { 'require.resolve': undefined },
-        platform: 'node',
-        concurrency: 10,
+            format: "esm",
+            bundle: true,
+            minify: true,
+            sourcemap: true,
+            sourcesContent: false,
+            keepNames: false,
+            outputFileExtension: '.mjs',
+            exclude: ["aws-sdk"],
+            target: "node18",
+            define: { "require.resolve": undefined },
+            platform: "node",
+            concurrency: 10,
+            banner: {
+                // https://github.com/evanw/esbuild/issues/1921
+                js: "import { createRequire } from 'module';const require = createRequire(import.meta.url);",
+            }
         },
         "serverless-offline": {
             httpPort: 6001,
