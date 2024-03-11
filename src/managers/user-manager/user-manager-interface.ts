@@ -7,7 +7,10 @@ export interface IUserManager {
     createUser(userModel: CreateUserRequest): Promise<IUserCredential>;
     getUser(id: string): Promise<IUser>;
     authenticateUser(username: string, password: string): Promise<IUserCredential>;
-    findUsers(searchCriteria: IUserSearchCriteria): Promise<IUser[]>;
+    findUsers(
+        searchCriteria: IUserSearchCriteria,
+        lastEvaluatedKey: Record<string, AttributeValue> | undefined,
+    ): Promise<IScanResult<IUser>>;
     findUsersById(ids: string[]): Promise<IUser[]>;
     addGuestUser(givenName: string, familyName: string, phoneNumber: string): Promise<IUser>;
     deleteGuestsWithNumber(phoneNumber: string): Promise<string[]>;

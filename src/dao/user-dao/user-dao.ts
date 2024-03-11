@@ -53,37 +53,52 @@ export class UserDao extends DaoBase<IUser, IUserDto> implements IUserDao {
         return scan;
     }
 
-    async findUsers(searchCriteria: IUserSearchCriteria): Promise<IUser[]> {
-        // can't have more than 100 in a single query
-        const chunks: string[][] = [];
+    async findByPhoneNumber(
+        searchCriteria: IUserSearchCriteria,
+        lastEvaluatedKey = undefined,
+    ): Promise<IScanResult<IUser>> {
+        const numbers = new Set<string>();
+        searchCriteria.phoneNumbers.forEach((n) => {
+            numbers.add(n.slice(-10));
+        });
 
-        const uniqueNumbers = searchCriteria.phoneNumbers.reduce(
-            (included: string[], currentNumber: string) =>
-                included.includes(currentNumber.slice(-10)) ? included : [...included, currentNumber.slice(-10)],
-            [],
+        const expressionAttributes = {};
+        const numbersParams = [];
+        Array.from(numbers).forEach((num, index) => {
+            const placeholder = `:num${index}`;
+            numbersParams.push(placeholder);
+            expressionAttributes[placeholder] = { S: num };
+        });
+
+        const expressionPieces: string[] = [];
+
+        for (let i = 0; i < numbersParams.length; i += this._chunkSize) {
+            expressionPieces.push(`#phoneNumber in (${numbersParams.slice(i, i + this._chunkSize).join(",")})`);
+        }
+
+        // Max 100 operands in IN operator, need to split up if more
+        const filterExpression = expressionPieces.join(" OR ");
+
+        const result = await this._client.send(
+            new ScanCommand({
+                TableName: this.dbConfiguration.tableName,
+                ExclusiveStartKey: lastEvaluatedKey,
+                FilterExpression: filterExpression,
+                ExpressionAttributeNames: {
+                    "#phoneNumber": "phoneNumber",
+                },
+                ExpressionAttributeValues: {
+                    ...expressionAttributes,
+                },
+            }),
         );
 
-        for (let i = 0; i < uniqueNumbers.length; i += this._chunkSize) {
-            chunks.push(uniqueNumbers.slice(i, i + this._chunkSize));
-        }
+        const scan = new ScanResult(
+            result.Items.map((i) => this._mapper.toDomainModel(unmarshall(i) as IUserDto)),
+            result.LastEvaluatedKey ?? null,
+        );
 
-        const users: IUser[] = [];
-        for (const chunk of chunks) {
-            const placeholders = `[${chunk.map((_) => "?").join(",")}]`;
-            const statement = this._userDaoStatements.search.replace("?", placeholders);
-            const result = await this._client.send(
-                new ExecuteStatementCommand({
-                    Statement: statement,
-                    Parameters: chunk.map((n) => ({ S: n.slice(-10) })), // use the last 10 digits (ignore country code)
-                }),
-            );
-
-            if (result.Items?.length) {
-                users.push(...result.Items.map((i) => this._mapper.toDomainModel(unmarshall(i) as IUserDto)));
-            }
-        }
-
-        return users;
+        return scan;
     }
 
     async findUsersById(ids: string[]): Promise<IUser[]> {
