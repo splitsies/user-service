@@ -7,6 +7,7 @@ import {
     IScanResult,
     IUserCredential,
     InvalidArgumentsError,
+    ScanResult,
     UserCredential,
 } from "@splitsies/shared-models";
 import { IAuthInteractor } from "src/interactor/auth-interactor-interface";
@@ -74,12 +75,15 @@ export class UserManager implements IUserManager {
         return new UserCredential(this._userMapper.toDtoModel(user), userAuth.authToken, userAuth.expiresAt);
     }
 
-    async findUsers(searchCriteria: IUserSearchCriteria): Promise<IUser[]> {
-        const users = await this._userDao.findUsers(searchCriteria);
-        if (users.length === 0) return users;
+    async findUsers(
+        searchCriteria: IUserSearchCriteria,
+        lastEvaluatedKey: Record<string, AttributeValue> | undefined,
+    ): Promise<IScanResult<IUser>> {
+        const scanResult = await this._userDao.findByPhoneNumber(searchCriteria, lastEvaluatedKey);
+        if (scanResult.result.length === 0) return scanResult;
 
         const usersByPhoneNumber = new Map<string, IUser[]>();
-        users.forEach((u) => {
+        scanResult.result.forEach((u) => {
             usersByPhoneNumber.set(u.phoneNumber, [...(usersByPhoneNumber.get(u.phoneNumber) ?? []), u]);
         });
 
@@ -93,7 +97,7 @@ export class UserManager implements IUserManager {
             );
         }
 
-        return list;
+        return new ScanResult(list, scanResult.lastEvaluatedKey);
     }
 
     findUsersById(ids: string[]): Promise<IUser[]> {
@@ -109,8 +113,8 @@ export class UserManager implements IUserManager {
 
     async deleteGuestsWithNumber(phoneNumber: string): Promise<string[]> {
         if (!phoneNumber) return [];
-        const users = await this._userDao.findUsers(new UserSearchCriteria([phoneNumber]));
-        const filtered = users.filter((u) => u.id.startsWith("@splitsies-guest"));
+        const users = await this._userDao.findByPhoneNumber(new UserSearchCriteria([phoneNumber]));
+        const filtered = users.result.filter((u) => u.id.startsWith("@splitsies-guest"));
 
         if (filtered.length === 0) {
             return [];

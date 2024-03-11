@@ -28,15 +28,20 @@ export const main = middyfy(
         } else if (event.queryStringParameters.phoneNumbers) {
             const phoneNumbers = event.queryStringParameters.phoneNumbers.split(",");
             const searchCriteria = new UserSearchCriteria(phoneNumbers);
+            const lastKey = event.queryStringParameters.lastKey
+                ? (JSON.parse(decodeURIComponent(event.queryStringParameters.lastKey)) as Record<
+                      string,
+                      AttributeValue
+                  >)
+                : undefined;
 
-            const result = await userService.findUsers(searchCriteria);
+            const result = await userService.findUsers(searchCriteria, lastKey);
+            const scan = new ScanResult(
+                result.result.map((u) => mapper.toDtoModel(u)),
+                result.lastEvaluatedKey,
+            );
 
-            return !!result
-                ? new DataResponse(
-                      HttpStatusCode.OK,
-                      result.map((u) => mapper.toDtoModel(u)),
-                  ).toJson()
-                : new DataResponse(HttpStatusCode.NOT_FOUND, undefined).toJson();
+            return new DataResponse(HttpStatusCode.OK, scan).toJson();
         } else if (event.queryStringParameters.filter) {
             const search = decodeURIComponent(event.queryStringParameters.filter);
             const lastKey = event.queryStringParameters.lastKey
