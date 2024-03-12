@@ -39,22 +39,14 @@ export class UserService implements IUserService {
         return await this._userManager.authenticateUser(username, password);
     }
 
-    async findUsers(
-        searchCriteria: IUserSearchCriteria,
-        lastEvaluatedKey: Record<string, AttributeValue> | undefined,
-    ): Promise<IScanResult<IUser>> {
-        return await this._userManager.findUsers(searchCriteria, lastEvaluatedKey);
-    }
-
-    async findUsersById(ids: string[]): Promise<IUser[]> {
-        return await this._userManager.findUsersById(ids);
-    }
-
     async addGuestUser(givenName: string, familyName: string, phoneNumber: string): Promise<IUser> {
         return await this._userManager.addGuestUser(givenName, familyName, phoneNumber);
     }
 
-    findByUsername(search: string, lastKey: Record<string, AttributeValue> | undefined): Promise<IScanResult<IUser>> {
-        return this._userManager.findByUsername(search, lastKey);
+    async search(
+        criteria: IUserSearchCriteria,
+        lastEvaluatedKey: Record<string, AttributeValue> | undefined,
+    ): Promise<IScanResult<IUser>> {
+        return this._userManager.search(criteria, lastEvaluatedKey);
     }
 }

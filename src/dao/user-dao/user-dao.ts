@@ -6,8 +6,7 @@ import { IUserDto } from "src/models/user-dto/user-dto-interface";
 import { IUser } from "src/models/user/user-interface";
 import { IUserDao } from "./user-dao-interface";
 import { IUserSearchCriteria } from "src/models/user-search-criteria/user-search-criteria-interface";
-import { IUserDaoStatements } from "./user-dao-statements-interface";
-import { ExecuteStatementCommand, ScanCommand } from "@aws-sdk/client-dynamodb";
+import { ScanCommand } from "@aws-sdk/client-dynamodb";
 import { unmarshall } from "@aws-sdk/util-dynamodb";
 import { IScanResult, ScanResult } from "@splitsies/shared-models";
 import { AttributeValue } from "@aws-sdk/client-dynamodb/dist-types/models/models_0";
@@ -19,65 +18,89 @@ export class UserDao extends DaoBase<IUser, IUserDto> implements IUserDao {
         @inject(ILogger) logger: ILogger,
         @inject(IDbConfiguration) private dbConfiguration: IDbConfiguration,
         @inject(IUserMapper) mapper: IUserMapper,
-        @inject(IUserDaoStatements) private readonly _userDaoStatements: IUserDaoStatements,
     ) {
         const keySelector = (user: IUser) => ({ id: user.id });
         super(logger, dbConfiguration, dbConfiguration.tableName, keySelector, mapper);
     }
 
-    async findByUsername(
-        search: string,
-        lastKey: Record<string, AttributeValue> | undefined,
+    async search(
+        criteria: IUserSearchCriteria,
+        lastEvaluatedKey: Record<string, AttributeValue> | undefined = undefined,
     ): Promise<IScanResult<IUser>> {
-        const result = await this._client.send(
-            new ScanCommand({
-                TableName: this.dbConfiguration.tableName,
-                ExclusiveStartKey: lastKey,
-                FilterExpression: "begins_with(#username, :search) AND NOT begins_with(#id, :guestPrefix)",
-                ExpressionAttributeNames: {
-                    "#id": "id",
-                    "#username": "username",
-                },
-                ExpressionAttributeValues: {
-                    ":search": { S: search.toLowerCase() },
-                    ":guestPrefix": { S: "@splitsies-guest" },
-                },
-            }),
-        );
+        let filterClauses: string[] = [];
+        let filterParams = {};
+        let attributeParams = {};
 
-        const scan = new ScanResult(
-            result.Items.map((i) => this._mapper.toDomainModel(unmarshall(i) as IUserDto)),
-            result.LastEvaluatedKey ?? null,
-        );
+        if (criteria.phoneNumbers !== undefined) {
+            filterParams["#phoneNumber"] = "phoneNumber";
+            const numbers = new Set<string>();
+            criteria.phoneNumbers.forEach((n) => {
+                numbers.add(n.slice(-10));
+            });
 
-        return scan;
-    }
+            const expressionAttributes = {};
+            const numbersParams = [];
+            Array.from(numbers).forEach((num, index) => {
+                const placeholder = `:num${index}`;
+                numbersParams.push(placeholder);
+                expressionAttributes[placeholder] = { S: num };
+            });
 
-    async findByPhoneNumber(
-        searchCriteria: IUserSearchCriteria,
-        lastEvaluatedKey = undefined,
-    ): Promise<IScanResult<IUser>> {
-        const numbers = new Set<string>();
-        searchCriteria.phoneNumbers.forEach((n) => {
-            numbers.add(n.slice(-10));
-        });
+            const expressionPieces: string[] = [];
 
-        const expressionAttributes = {};
-        const numbersParams = [];
-        Array.from(numbers).forEach((num, index) => {
-            const placeholder = `:num${index}`;
-            numbersParams.push(placeholder);
-            expressionAttributes[placeholder] = { S: num };
-        });
+            for (let i = 0; i < numbersParams.length; i += this._chunkSize) {
+                expressionPieces.push(`#phoneNumber in (${numbersParams.slice(i, i + this._chunkSize).join(",")})`);
+            }
 
-        const expressionPieces: string[] = [];
+            attributeParams = { ...attributeParams, ...expressionAttributes };
 
-        for (let i = 0; i < numbersParams.length; i += this._chunkSize) {
-            expressionPieces.push(`#phoneNumber in (${numbersParams.slice(i, i + this._chunkSize).join(",")})`);
+            // Max 100 operands in IN operator, need to split up if more
+            filterClauses.push(`(${expressionPieces.join(" OR ")})`);
         }
 
-        // Max 100 operands in IN operator, need to split up if more
-        const filterExpression = expressionPieces.join(" OR ");
+        if (criteria.ids !== undefined) {
+            filterParams["#id"] = "id";
+            const ids = new Set<string>();
+            criteria.ids.forEach((n) => {
+                ids.add(n);
+            });
+
+            const expressionAttributes = {};
+            const params = [];
+            Array.from(ids).forEach((id, index) => {
+                const placeholder = `:id${index}`;
+                params.push(placeholder);
+                expressionAttributes[placeholder] = { S: id };
+            });
+
+            const expressionPieces: string[] = [];
+
+            for (let i = 0; i < params.length; i += this._chunkSize) {
+                expressionPieces.push(`#id in (${params.slice(i, i + this._chunkSize).join(",")})`);
+            }
+
+            attributeParams = { ...attributeParams, ...expressionAttributes };
+
+            // Max 100 operands in IN operator, need to split up if more
+            filterClauses.push(`(${expressionPieces.join(" OR ")})`);
+        }
+
+        if (criteria.usernameFilter !== undefined) {
+            if (!filterParams["#id"]) {
+                filterParams["#id"] = "id";
+            }
+            filterParams["#username"] = "username";
+
+            attributeParams = {
+                ...attributeParams,
+                ":usernameFilter": { S: criteria.usernameFilter },
+                ":guestPrefix": { S: "@splitsies-guest" },
+            };
+
+            filterClauses.push(`(begins_with(#username, :usernameFilter) AND NOT begins_with(#id, :guestPrefix))`);
+        }
+
+        const filterExpression = filterClauses.join(" AND ");
 
         const result = await this._client.send(
             new ScanCommand({
@@ -85,10 +108,10 @@ export class UserDao extends DaoBase<IUser, IUserDto> implements IUserDao {
                 ExclusiveStartKey: lastEvaluatedKey,
                 FilterExpression: filterExpression,
                 ExpressionAttributeNames: {
-                    "#phoneNumber": "phoneNumber",
+                    ...filterParams,
                 },
                 ExpressionAttributeValues: {
-                    ...expressionAttributes,
+                    ...attributeParams,
                 },
             }),
         );
@@ -99,31 +122,5 @@ export class UserDao extends DaoBase<IUser, IUserDto> implements IUserDao {
         );
 
         return scan;
-    }
-
-    async findUsersById(ids: string[]): Promise<IUser[]> {
-        const chunks: string[][] = [];
-
-        for (let i = 0; i < ids.length; i += this._chunkSize) {
-            chunks.push(ids.slice(i, i + this._chunkSize));
-        }
-
-        const users: IUser[] = [];
-        for (const chunk of chunks) {
-            const placeholders = `[${chunk.map((_) => "?").join(",")}]`;
-            const statement = this._userDaoStatements.idSearch.replace("?", placeholders);
-            const result = await this._client.send(
-                new ExecuteStatementCommand({
-                    Statement: statement,
-                    Parameters: chunk.map((n) => ({ S: n })),
-                }),
-            );
-
-            if (result.Items?.length) {
-                users.push(...result.Items.map((i) => this._mapper.toDomainModel(unmarshall(i) as IUserDto)));
-            }
-        }
-
-        return users;
     }
 }

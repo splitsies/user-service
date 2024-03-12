@@ -5,10 +5,8 @@ import { AttributeValue } from "@aws-sdk/client-dynamodb/dist-types/models/model
 import { IScanResult } from "@splitsies/shared-models";
 
 export interface IUserDao extends IDao<IUser> {
-    findUsersById(ids: string[]): Promise<IUser[]>;
-    findByUsername(search: string, lastKey?: Record<string, AttributeValue>): Promise<IScanResult<IUser>>;
-    findByPhoneNumber(
-        searchCriteria: IUserSearchCriteria,
+    search(
+        criteria: IUserSearchCriteria,
         lastEvaluatedKey?: Record<string, AttributeValue> | undefined,
     ): Promise<IScanResult<IUser>>;
 }

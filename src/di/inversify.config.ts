@@ -20,8 +20,6 @@ import { AuthProvider } from "src/providers/auth-provider";
 import { IAuthProvider } from "src/providers/auth-provider-interface";
 import { IAdminAuthProvider } from "src/providers/admin-auth-provider-interface";
 import { AdminAuthProvider } from "src/providers/admin-auth-provider";
-import { IUserDaoStatements } from "src/dao/user-dao/user-dao-statements-interface";
-import { UserDaoStatements } from "src/dao/user-dao/user-dao-statements";
 import { IApiConfiguration } from "src/models/configuration/api/api-configuration-interface";
 import { ApiConfiguration } from "src/models/configuration/api/api-configuration";
 import { IExpenseApiClient } from "src/api/expense-api-client/expense-api-client-interface";
@@ -43,7 +41,6 @@ container.bind<IFirebaseConfiguration>(IFirebaseConfiguration).to(FirebaseConfig
 container.bind<IAuthInteractor>(IAuthInteractor).to(AuthInteractor);
 container.bind<IAuthProvider>(IAuthProvider).to(AuthProvider).inSingletonScope();
 container.bind<IAdminAuthProvider>(IAdminAuthProvider).to(AdminAuthProvider).inSingletonScope();
-container.bind<IUserDaoStatements>(IUserDaoStatements).to(UserDaoStatements).inSingletonScope();
 container.bind<IApiConfiguration>(IApiConfiguration).to(ApiConfiguration).inSingletonScope();
 container.bind<IExpenseApiClient>(IExpenseApiClient).to(ExpenseApiClient).inSingletonScope();
 container.bind<IAuthHeaderProvider>(IAuthHeaderProvider).to(AuthHeaderProvider).inSingletonScope();

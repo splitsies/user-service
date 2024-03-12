@@ -14,5 +14,9 @@ export interface IUserService {
     findUsersById(ids: string[]): Promise<IUser[]>;
     addGuestUser(givenName: string, familyName: string, phoneNumber: string): Promise<IUser>;
     findByUsername(search: string, lastKey: Record<string, AttributeValue> | undefined): Promise<IScanResult<IUser>>;
+    search(
+        criteria: IUserSearchCriteria,
+        lastEvaluatedKey: Record<string, AttributeValue> | undefined,
+    ): Promise<IScanResult<IUser>>;
 }
 export const IUserService = Symbol.for("IUserService");

@@ -75,35 +75,6 @@ export class UserManager implements IUserManager {
         return new UserCredential(this._userMapper.toDtoModel(user), userAuth.authToken, userAuth.expiresAt);
     }
 
-    async findUsers(
-        searchCriteria: IUserSearchCriteria,
-        lastEvaluatedKey: Record<string, AttributeValue> | undefined,
-    ): Promise<IScanResult<IUser>> {
-        const scanResult = await this._userDao.findByPhoneNumber(searchCriteria, lastEvaluatedKey);
-        if (scanResult.result.length === 0) return scanResult;
-
-        const usersByPhoneNumber = new Map<string, IUser[]>();
-        scanResult.result.forEach((u) => {
-            usersByPhoneNumber.set(u.phoneNumber, [...(usersByPhoneNumber.get(u.phoneNumber) ?? []), u]);
-        });
-
-        const list = [];
-        for (const number of usersByPhoneNumber.keys()) {
-            const usersWithNumber = usersByPhoneNumber.get(number);
-            list.push(
-                ...(usersWithNumber.length === 1
-                    ? usersWithNumber
-                    : usersWithNumber.filter((u) => !u.id.startsWith("@splitsies-guest"))),
-            );
-        }
-
-        return new ScanResult(list, scanResult.lastEvaluatedKey);
-    }
-
-    findUsersById(ids: string[]): Promise<IUser[]> {
-        return this._userDao.findUsersById(ids);
-    }
-
     async addGuestUser(givenName: string, familyName: string, phoneNumber: string): Promise<IUser> {
         const guid = randomUUID();
         const id = `@splitsies-guest${guid}`;
@@ -113,7 +84,7 @@ export class UserManager implements IUserManager {
 
     async deleteGuestsWithNumber(phoneNumber: string): Promise<string[]> {
         if (!phoneNumber) return [];
-        const users = await this._userDao.findByPhoneNumber(new UserSearchCriteria([phoneNumber]));
+        const users = await this._userDao.search(new UserSearchCriteria({ phoneNumbers: [phoneNumber] }));
         const filtered = users.result.filter((u) => u.id.startsWith("@splitsies-guest"));
 
         if (filtered.length === 0) {
@@ -124,7 +95,10 @@ export class UserManager implements IUserManager {
         return filtered.map((u) => u.id);
     }
 
-    findByUsername(search: string, lastKey: Record<string, AttributeValue> | undefined): Promise<IScanResult<IUser>> {
-        return this._userDao.findByUsername(search, lastKey);
+    async search(
+        criteria: IUserSearchCriteria,
+        lastEvaluatedKey: Record<string, AttributeValue> | undefined,
+    ): Promise<IScanResult<IUser>> {
+        return this._userDao.search(criteria, lastEvaluatedKey);
     }
 }
