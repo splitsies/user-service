@@ -15,7 +15,7 @@ const mapper = container.get<IUserMapper>(IUserMapper);
 
 export const main = middyfy(
     SplitsiesFunctionHandlerFactory.create<typeof schema, IUserDto[] | IScanResult<IUserDto>>(logger, async (event) => {
-        if (event.queryStringParameters.ids) {
+        if (event.queryStringParameters.ids !== undefined) {
             const ids = event.queryStringParameters.ids.split(",");
             const result = await userService.findUsersById(ids);
 
@@ -25,7 +25,7 @@ export const main = middyfy(
                       result.map((u) => mapper.toDtoModel(u)),
                   ).toJson()
                 : new DataResponse(HttpStatusCode.NOT_FOUND, undefined).toJson();
-        } else if (event.queryStringParameters.phoneNumbers) {
+        } else if (event.queryStringParameters.phoneNumbers !== undefined) {
             const phoneNumbers = event.queryStringParameters.phoneNumbers.split(",");
             const searchCriteria = new UserSearchCriteria(phoneNumbers);
             const lastKey = event.queryStringParameters.lastKey
@@ -42,7 +42,7 @@ export const main = middyfy(
             );
 
             return new DataResponse(HttpStatusCode.OK, scan).toJson();
-        } else if (event.queryStringParameters.filter) {
+        } else if (event.queryStringParameters.filter !== undefined) {
             const search = decodeURIComponent(event.queryStringParameters.filter);
             const lastKey = event.queryStringParameters.lastKey
                 ? (JSON.parse(decodeURIComponent(event.queryStringParameters.lastKey)) as Record<
