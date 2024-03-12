@@ -18,7 +18,9 @@ export class CreateUserValidator implements ICreateUserValidator {
             throw new InvalidFormatError("Username was invalid");
         }
 
-        if ((await this._userDao.search(new UserSearchCriteria({ filter: createRequest.username }))).result.length > 0) {
+        if (
+            (await this._userDao.search(new UserSearchCriteria({ filter: createRequest.username }))).result.length > 0
+        ) {
             throw new UsernameTakenError();
         }
     }
