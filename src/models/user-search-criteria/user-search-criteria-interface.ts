@@ -1,3 +1,5 @@
 export interface IUserSearchCriteria {
-    phoneNumbers: string[];
+    phoneNumbers?: string[];
+    ids?: string[];
+    usernameFilter?: string;
 }

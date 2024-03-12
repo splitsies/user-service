@@ -15,52 +15,27 @@ const mapper = container.get<IUserMapper>(IUserMapper);
 
 export const main = middyfy(
     SplitsiesFunctionHandlerFactory.create<typeof schema, IUserDto[] | IScanResult<IUserDto>>(logger, async (event) => {
-        if (event.queryStringParameters.ids) {
-            const ids = event.queryStringParameters.ids.split(",");
-            const result = await userService.findUsersById(ids);
-
-            return !!result
-                ? new DataResponse(
-                      HttpStatusCode.OK,
-                      result.map((u) => mapper.toDtoModel(u)),
-                  ).toJson()
-                : new DataResponse(HttpStatusCode.NOT_FOUND, undefined).toJson();
-        } else if (event.queryStringParameters.phoneNumbers) {
-            const phoneNumbers = event.queryStringParameters.phoneNumbers.split(",");
-            const searchCriteria = new UserSearchCriteria(phoneNumbers);
-            const lastKey = event.queryStringParameters.lastKey
-                ? (JSON.parse(decodeURIComponent(event.queryStringParameters.lastKey)) as Record<
-                      string,
-                      AttributeValue
-                  >)
-                : undefined;
-
-            const result = await userService.findUsers(searchCriteria, lastKey);
-            const scan = new ScanResult(
-                result.result.map((u) => mapper.toDtoModel(u)),
-                result.lastEvaluatedKey,
-            );
-
-            return new DataResponse(HttpStatusCode.OK, scan).toJson();
-        } else if (event.queryStringParameters.filter) {
-            const search = decodeURIComponent(event.queryStringParameters.filter);
-            const lastKey = event.queryStringParameters.lastKey
-                ? (JSON.parse(decodeURIComponent(event.queryStringParameters.lastKey)) as Record<
-                      string,
-                      AttributeValue
-                  >)
-                : undefined;
-
-            const result = await userService.findByUsername(search, lastKey);
-
-            const scan = new ScanResult(
-                result.result.map((u) => mapper.toDtoModel(u)),
-                result.lastEvaluatedKey,
-            );
-
-            return new DataResponse(HttpStatusCode.OK, scan).toJson();
+        const { phoneNumbers, ids, filter } = event.queryStringParameters;
+        if (!phoneNumbers && !ids && !filter) {
+            return new DataResponse(HttpStatusCode.BAD_REQUEST, null).toJson();
         }
 
-        return new DataResponse(HttpStatusCode.OK, []).toJson();
+        const criteria = new UserSearchCriteria({
+            phoneNumbers: phoneNumbers?.split(","),
+            ids: ids?.split(","),
+            filter,
+        });
+        const lastEvaluatedKey = event.queryStringParameters.lastKey
+            ? (JSON.parse(decodeURIComponent(event.queryStringParameters.lastKey)) as Record<string, AttributeValue>)
+            : undefined;
+
+        const result = await userService.search(criteria, lastEvaluatedKey);
+
+        const scan = new ScanResult(
+            result.result.map((u) => mapper.toDtoModel(u)),
+            result.lastEvaluatedKey,
+        );
+
+        return new DataResponse(HttpStatusCode.OK, scan).toJson();
     }),
 );

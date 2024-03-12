@@ -3,6 +3,7 @@ import { ICreateUserValidator } from "./create-user-validator-interface";
 import { CreateUserRequest } from "@splitsies/shared-models";
 import { IUserDao } from "src/dao/user-dao/user-dao-interface";
 import { InvalidFormatError, UsernameTakenError } from "src/models/errors";
+import { UserSearchCriteria } from "src/models/user-search-criteria/user-search-criteria";
 
 @injectable()
 export class CreateUserValidator implements ICreateUserValidator {
@@ -17,7 +18,9 @@ export class CreateUserValidator implements ICreateUserValidator {
             throw new InvalidFormatError("Username was invalid");
         }
 
-        if ((await this._userDao.findByUsername(createRequest.username)).result.length > 0) {
+        if (
+            (await this._userDao.search(new UserSearchCriteria({ filter: createRequest.username }))).result.length > 0
+        ) {
             throw new UsernameTakenError();
         }
     }
