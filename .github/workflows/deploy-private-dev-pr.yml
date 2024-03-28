@@ -1,4 +1,4 @@
-name: Deploy Dev PR
+name: Deploy Private Dev PR
 
 on:
   pull_request:
