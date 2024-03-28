@@ -13,6 +13,11 @@ export class AuthProvider implements IAuthProvider {
         @inject(ILogger) logger: ILogger,
         @inject(IFirebaseConfiguration) firebaseConfig: IFirebaseConfiguration,
     ) {
+        if (firebaseConfig.vpcMode) {
+            logger.log("VPC Mode enabled, skipping firebase initialization");
+            return;
+        }
+
         if (!firebaseConfig.devMode) {
             const firebaseApp = initializeApp(firebaseConfig);
             this.auth = getAuth(firebaseApp);
