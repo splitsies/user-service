@@ -14,8 +14,11 @@ export class AdminAuthProvider implements IAdminAuthProvider {
         @inject(ILogger) logger: ILogger,
         @inject(IFirebaseConfiguration) firebaseConfig: IFirebaseConfiguration,
     ) {
-        if (firebaseConfig.vpcMode) return;
-        
+        if (firebaseConfig.vpcMode) {
+            logger.log("VPC Mode enabled, skipping admin firebase initialization");
+            return;
+        }
+
         logger.log(
             `Creating admin auth provider connected to ${firebaseConfig.devMode ? "emulator" : "firebase server"}`,
         );

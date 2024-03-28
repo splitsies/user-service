@@ -13,6 +13,7 @@ const mapper = container.get<IUserMapper>(IUserMapper);
 
 export const main = middyfy(
     SplitsiesFunctionHandlerFactory.create<typeof schema, IUserDto>(logger, async (event) => {
+        console.log({ event });
         if (!event.pathParameters.id) return new DataResponse(HttpStatusCode.BAD_REQUEST, "'id' was missing");
 
         const result = await userService.getUser(event.pathParameters.id);

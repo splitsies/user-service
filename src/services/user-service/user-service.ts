@@ -13,7 +13,9 @@ export class UserService implements IUserService {
         @inject(IUserManager) private readonly _userManager: IUserManager,
         @inject(IExpenseApiClient) private readonly _expenseApiClient: IExpenseApiClient,
         @inject(IExpenseUserDetailsMapper) private readonly _expenseUserDetailsMapper: IExpenseUserDetailsMapper,
-    ) {}
+    ) {
+        console.log("constructed user service");
+    }
 
     async getUser(id: string): Promise<IUser> {
         return await this._userManager.getUser(id);
