@@ -33,7 +33,10 @@ export class UserManager implements IUserManager {
     }
 
     async getUser(id: string): Promise<IUser> {
-        return await this._userDao.read({ id });
+        this._logger.log(`starting at ${Date.now()}`);
+        const user = await this._userDao.read({ id });
+        this._logger.log(`finished at ${Date.now()}`);
+        return user;
     }
 
     async createUser(userModel: CreateUserRequest): Promise<IUserCredential> {
