@@ -19,8 +19,10 @@ export class UserDao extends DaoBase<IUser, IUserDto> implements IUserDao {
         @inject(IDbConfiguration) private dbConfiguration: IDbConfiguration,
         @inject(IUserMapper) mapper: IUserMapper,
     ) {
+        logger.log("starting constructor for user dao");
         const keySelector = (user: IUser) => ({ id: user.id });
         super(logger, dbConfiguration, dbConfiguration.tableName, keySelector, mapper);
+        logger.log("user dao finished contructor");
     }
 
     async search(
