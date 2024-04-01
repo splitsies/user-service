@@ -27,7 +27,7 @@ const serverlessConfiguration: AWS = {
                 "sg-0f8a62286187fbab0"
             ],
             subnetIds: [
-                "subnet-0ca030cb2990146fd"
+                "subnet-0301a21d6a9ca2e03"
             ]
         },
     
