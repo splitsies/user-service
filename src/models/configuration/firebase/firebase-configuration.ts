@@ -14,7 +14,6 @@ export class FirebaseConfiguration implements IFirebaseConfiguration {
     readonly devMode: boolean;
     readonly emulatorHost: string;
     readonly authTokenTtlMs: number;
-    readonly vpcMode: boolean;
 
     constructor() {
         assert(!!process.env.FIREBASE_API_KEY, "FIREBASE_API_KEY was undefined");
@@ -37,6 +36,5 @@ export class FirebaseConfiguration implements IFirebaseConfiguration {
         this.devMode = process.env.FIREBASE_DEV_MODE === "true";
         this.emulatorHost = process.env.FIREBASE_EMULATOR_HOST;
         this.authTokenTtlMs = parseInt(process.env.FIREBASE_AUTH_TOKEN_TTL_MS);
-        this.vpcMode = process.env.FIREBASE_VPC_MODE === "true";
     }
 }

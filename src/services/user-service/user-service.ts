@@ -2,7 +2,13 @@ import { inject, injectable } from "inversify";
 import { IUserService } from "./user-service-interface";
 import { IUser } from "src/models/user/user-interface";
 import { IUserManager } from "src/managers/user-manager/user-manager-interface";
-import { CreateUserRequest, IExpenseUserDetailsMapper, IScanResult, IUserCredential, QueueMessage } from "@splitsies/shared-models";
+import {
+    CreateUserRequest,
+    IExpenseUserDetailsMapper,
+    IScanResult,
+    IUserCredential,
+    QueueMessage,
+} from "@splitsies/shared-models";
 import { IUserSearchCriteria } from "src/models/user-search-criteria/user-search-criteria-interface";
 import { AttributeValue } from "@aws-sdk/client-dynamodb/dist-types/models/models_0";
 import { IMessageQueueClient } from "@splitsies/utils";
@@ -14,8 +20,8 @@ export class UserService implements IUserService {
     constructor(
         @inject(IUserManager) private readonly _userManager: IUserManager,
         @inject(IExpenseUserDetailsMapper) private readonly _expenseUserDetailsMapper: IExpenseUserDetailsMapper,
-        @inject(IMessageQueueClient) private readonly _messageQueueClient: IMessageQueueClient
-    ) { }
+        @inject(IMessageQueueClient) private readonly _messageQueueClient: IMessageQueueClient,
+    ) {}
 
     async getUser(id: string): Promise<IUser> {
         return await this._userManager.getUser(id);
@@ -25,8 +31,10 @@ export class UserService implements IUserService {
         const user = await this._userManager.createUser(userModel);
         const deletedGuestIds = await this._userManager.deleteGuestsWithNumber(user.user.phoneNumber);
 
-        const payload = deletedGuestIds.map((deletedGuestId) => ({ deletedGuestId, user: this._expenseUserDetailsMapper.fromUserDto(user.user) }));
-        console.log({ payload });
+        const payload = deletedGuestIds.map((deletedGuestId) => ({
+            deletedGuestId,
+            user: this._expenseUserDetailsMapper.fromUserDto(user.user),
+        }));
         await this._messageQueueClient.create(new QueueMessage(QueueConfig.guestUserReplaced, randomUUID(), payload));
 
         return user;

@@ -1,7 +1,14 @@
 import "reflect-metadata";
 import { Container } from "inversify";
 
-import { ApiKeyConfiguration, IApiKeyConfiguration, ILogger, IMessageQueueClient, Logger, MessageQueueClient } from "@splitsies/utils";
+import {
+    ApiKeyConfiguration,
+    IApiKeyConfiguration,
+    ILogger,
+    IMessageQueueClient,
+    Logger,
+    MessageQueueClient,
+} from "@splitsies/utils";
 import { IUserDao } from "src/dao/user-dao/user-dao-interface";
 import { UserDao } from "src/dao/user-dao/user-dao";
 import { IUserMapper } from "src/mappers/user-mapper/user-mapper-interface";

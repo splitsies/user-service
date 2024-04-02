@@ -28,14 +28,10 @@ export class UserManager implements IUserManager {
         @inject(IUserMapper) private readonly _userMapper: IUserMapper,
         @inject(IAuthInteractor) private readonly _authInteractor: IAuthInteractor,
         @inject(ICreateUserValidator) private readonly _createUserValidator: ICreateUserValidator,
-    ) {
-        console.log("constructed user manager");
-    }
+    ) {}
 
     async getUser(id: string): Promise<IUser> {
-        this._logger.log(`starting at ${Date.now()}`);
         const user = await this._userDao.read({ id });
-        this._logger.log(`finished at ${Date.now()}`);
         return user;
     }
 

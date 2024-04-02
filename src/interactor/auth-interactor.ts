@@ -17,9 +17,7 @@ export class AuthInteractor implements IAuthInteractor {
         @inject(IAuthProvider) private readonly authProvider: IAuthProvider,
         @inject(IAdminAuthProvider) private readonly adminAuthProvider: IAdminAuthProvider,
         @inject(IFirebaseConfiguration) private readonly firebaseConfig: IFirebaseConfiguration,
-    ) {
-        logger.log("Auth interactor constructed");
-    }
+    ) {}
 
     async create(userModel: CreateUserRequest): Promise<IUserAuthentication> {
         try {
