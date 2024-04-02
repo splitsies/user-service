@@ -9,7 +9,6 @@ export interface IFirebaseConfiguration {
     readonly devMode: boolean;
     readonly emulatorHost: string;
     readonly authTokenTtlMs: number;
-    readonly vpcMode: boolean;
 }
 
 export const IFirebaseConfiguration = Symbol.for("IFirebaseConfiguration");
