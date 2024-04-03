@@ -21,14 +21,12 @@ import { IDbConfiguration } from "src/models/configuration/db/db-configuration-i
 import { DbConfiguration } from "src/models/configuration/db/db-configuration";
 import { IFirebaseConfiguration } from "src/models/configuration/firebase/firebase-configuration-interface";
 import { FirebaseConfiguration } from "src/models/configuration/firebase/firebase-configuration";
-import { IAuthInteractor } from "src/interactor/auth-interactor-interface";
+import { IAuthInteractor } from "src/interactor/auth-interactor-interface"
 import { AuthInteractor } from "src/interactor/auth-interactor";
 import { AuthProvider } from "src/providers/auth-provider";
 import { IAuthProvider } from "src/providers/auth-provider-interface";
 import { IAdminAuthProvider } from "src/providers/admin-auth-provider-interface";
 import { AdminAuthProvider } from "src/providers/admin-auth-provider";
-import { IApiConfiguration } from "src/models/configuration/api/api-configuration-interface";
-import { ApiConfiguration } from "src/models/configuration/api/api-configuration";
 import { IAuthHeaderProvider } from "src/providers/auth-header-provider/auth-header-provider-interface";
 import { AuthHeaderProvider } from "src/providers/auth-header-provider/auth-header-provider";
 import { ExpenseUserDetailsMapper, IExpenseUserDetailsMapper } from "@splitsies/shared-models";
@@ -46,7 +44,6 @@ container.bind<IFirebaseConfiguration>(IFirebaseConfiguration).to(FirebaseConfig
 container.bind<IAuthInteractor>(IAuthInteractor).to(AuthInteractor);
 container.bind<IAuthProvider>(IAuthProvider).to(AuthProvider).inSingletonScope();
 container.bind<IAdminAuthProvider>(IAdminAuthProvider).to(AdminAuthProvider).inSingletonScope();
-container.bind<IApiConfiguration>(IApiConfiguration).to(ApiConfiguration).inSingletonScope();
 container.bind<IAuthHeaderProvider>(IAuthHeaderProvider).to(AuthHeaderProvider).inSingletonScope();
 container.bind<IApiKeyConfiguration>(IApiKeyConfiguration).to(ApiKeyConfiguration).inSingletonScope();
 container.bind<IExpenseUserDetailsMapper>(IExpenseUserDetailsMapper).to(ExpenseUserDetailsMapper).inSingletonScope();
