@@ -12,3 +12,4 @@ jspm_packages
 **/local-db/docker/**
 
 **/*debug.log
+utils/local-firebase

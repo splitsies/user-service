@@ -31,7 +31,8 @@ export class UserManager implements IUserManager {
     ) {}
 
     async getUser(id: string): Promise<IUser> {
-        return await this._userDao.read({ id });
+        const user = await this._userDao.read({ id });
+        return user;
     }
 
     async createUser(userModel: CreateUserRequest): Promise<IUserCredential> {

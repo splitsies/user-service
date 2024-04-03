@@ -1,7 +1,14 @@
 import "reflect-metadata";
 import { Container } from "inversify";
 
-import { ApiKeyConfiguration, IApiKeyConfiguration, ILogger, Logger } from "@splitsies/utils";
+import {
+    ApiKeyConfiguration,
+    IApiKeyConfiguration,
+    ILogger,
+    IMessageQueueClient,
+    Logger,
+    MessageQueueClient,
+} from "@splitsies/utils";
 import { IUserDao } from "src/dao/user-dao/user-dao-interface";
 import { UserDao } from "src/dao/user-dao/user-dao";
 import { IUserMapper } from "src/mappers/user-mapper/user-mapper-interface";
@@ -22,8 +29,6 @@ import { IAdminAuthProvider } from "src/providers/admin-auth-provider-interface"
 import { AdminAuthProvider } from "src/providers/admin-auth-provider";
 import { IApiConfiguration } from "src/models/configuration/api/api-configuration-interface";
 import { ApiConfiguration } from "src/models/configuration/api/api-configuration";
-import { IExpenseApiClient } from "src/api/expense-api-client/expense-api-client-interface";
-import { ExpenseApiClient } from "src/api/expense-api-client/expense-api-client";
 import { IAuthHeaderProvider } from "src/providers/auth-header-provider/auth-header-provider-interface";
 import { AuthHeaderProvider } from "src/providers/auth-header-provider/auth-header-provider";
 import { ExpenseUserDetailsMapper, IExpenseUserDetailsMapper } from "@splitsies/shared-models";
@@ -42,10 +47,10 @@ container.bind<IAuthInteractor>(IAuthInteractor).to(AuthInteractor);
 container.bind<IAuthProvider>(IAuthProvider).to(AuthProvider).inSingletonScope();
 container.bind<IAdminAuthProvider>(IAdminAuthProvider).to(AdminAuthProvider).inSingletonScope();
 container.bind<IApiConfiguration>(IApiConfiguration).to(ApiConfiguration).inSingletonScope();
-container.bind<IExpenseApiClient>(IExpenseApiClient).to(ExpenseApiClient).inSingletonScope();
 container.bind<IAuthHeaderProvider>(IAuthHeaderProvider).to(AuthHeaderProvider).inSingletonScope();
 container.bind<IApiKeyConfiguration>(IApiKeyConfiguration).to(ApiKeyConfiguration).inSingletonScope();
 container.bind<IExpenseUserDetailsMapper>(IExpenseUserDetailsMapper).to(ExpenseUserDetailsMapper).inSingletonScope();
 container.bind<ICreateUserValidator>(ICreateUserValidator).to(CreateUserValidator).inSingletonScope();
+container.bind<IMessageQueueClient>(IMessageQueueClient).to(MessageQueueClient).inSingletonScope();
 
 export { container };

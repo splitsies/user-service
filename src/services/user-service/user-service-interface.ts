@@ -7,13 +7,7 @@ export interface IUserService {
     createUser(userModel: CreateUserRequest): Promise<IUserCredential>;
     getUser(id: string): Promise<IUser>;
     authenticateUser(username: string, password: string): Promise<IUserCredential>;
-    findUsers(
-        searchCriteria: IUserSearchCriteria,
-        lastEvaluatedKey: Record<string, AttributeValue> | undefined,
-    ): Promise<IScanResult<IUser>>;
-    findUsersById(ids: string[]): Promise<IUser[]>;
     addGuestUser(givenName: string, familyName: string, phoneNumber: string): Promise<IUser>;
-    findByUsername(search: string, lastKey: Record<string, AttributeValue> | undefined): Promise<IScanResult<IUser>>;
     search(
         criteria: IUserSearchCriteria,
         lastEvaluatedKey: Record<string, AttributeValue> | undefined,
