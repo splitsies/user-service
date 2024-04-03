@@ -21,7 +21,7 @@ import { IDbConfiguration } from "src/models/configuration/db/db-configuration-i
 import { DbConfiguration } from "src/models/configuration/db/db-configuration";
 import { IFirebaseConfiguration } from "src/models/configuration/firebase/firebase-configuration-interface";
 import { FirebaseConfiguration } from "src/models/configuration/firebase/firebase-configuration";
-import { IAuthInteractor } from "src/interactor/auth-interactor-interface" x
+import { IAuthInteractor } from "src/interactor/auth-interactor-interface"
 import { AuthInteractor } from "src/interactor/auth-interactor";
 import { AuthProvider } from "src/providers/auth-provider";
 import { IAuthProvider } from "src/providers/auth-provider-interface";
@@ -44,7 +44,6 @@ container.bind<IFirebaseConfiguration>(IFirebaseConfiguration).to(FirebaseConfig
 container.bind<IAuthInteractor>(IAuthInteractor).to(AuthInteractor);
 container.bind<IAuthProvider>(IAuthProvider).to(AuthProvider).inSingletonScope();
 container.bind<IAdminAuthProvider>(IAdminAuthProvider).to(AdminAuthProvider).inSingletonScope();
-container.bind<IApiConfiguration>(IApiConfiguration).to(ApiConfiguration).inSingletonScope();
 container.bind<IAuthHeaderProvider>(IAuthHeaderProvider).to(AuthHeaderProvider).inSingletonScope();
 container.bind<IApiKeyConfiguration>(IApiKeyConfiguration).to(ApiKeyConfiguration).inSingletonScope();
 container.bind<IExpenseUserDetailsMapper>(IExpenseUserDetailsMapper).to(ExpenseUserDetailsMapper).inSingletonScope();
