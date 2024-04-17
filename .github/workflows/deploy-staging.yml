@@ -22,7 +22,24 @@ jobs:
     - name: serverless deploy
       uses: serverless/github-action@v3.1
       with:
-        args: deploy --stage staging
+        args: deploy --stage staging \
+            --param="DB_REGION=us-east-1" \
+            --param="FIREBASE_VPC_MODE=false" \
+            --param="DB_SCAN_LIMIT=25" \
+            --param="DB_ENDPOINT= https://dynamodb.us-east-1.amazonaws.com/" \
+            --param="FIREBASE_DEV_MODE=false" \
+            --param="DB_TABLE_NAME=Splitsies-User-staging" \
+            --param="INTERNAL_API_KEY=${{ secrets.INTERNAL_API_KEY }}" \
+            --param="DB_ACCESS_KEY_ID=${{ secrets.DB_ACCESS_KEY_ID }}" \
+            --param="DB_SECRET_ACCESS_KEY=${{ secrets.DB_SECRET_ACCESS_KEY }}" \
+            --param="MESSAGE_QUEUE_ARN=${{ secrets.MESSAGE_QUEUE_ARN_STAGING }}" \
+            --param="FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN_STAGING }}" \
+            --param="FIREBASE_MEASUREMENT_ID=${{ secrets.FIREBASE_MEASUREMENT_ID_STAGING }}" \
+            --param="FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID_STAGING }}" \
+            --param="FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID_STAGING }}" \
+            --param="FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY_STAGING }}" \
+            --param="FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET_STAGING }}" \
+            --param="FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID_STAGING }}"
       env:
         SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
         AWS_ACCESS_KEY_ID: ${{ secrets.SPLITSIES_DEPLOY_ACCESS_KEY_ID }}
