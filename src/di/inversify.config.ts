@@ -21,7 +21,7 @@ import { IDbConfiguration } from "src/models/configuration/db/db-configuration-i
 import { DbConfiguration } from "src/models/configuration/db/db-configuration";
 import { IFirebaseConfiguration } from "src/models/configuration/firebase/firebase-configuration-interface";
 import { FirebaseConfiguration } from "src/models/configuration/firebase/firebase-configuration";
-import { IAuthInteractor } from "src/interactor/auth-interactor-interface"
+import { IAuthInteractor } from "src/interactor/auth-interactor-interface";
 import { AuthInteractor } from "src/interactor/auth-interactor";
 import { AuthProvider } from "src/providers/auth-provider";
 import { IAuthProvider } from "src/providers/auth-provider-interface";

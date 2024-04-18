@@ -54,4 +54,12 @@ export class UserService implements IUserService {
     ): Promise<IScanResult<IUser>> {
         return this._userManager.search(criteria, lastEvaluatedKey);
     }
+
+    async deleteUser(userId: string): Promise<void> {
+        const result = await this._userManager.deleteUser(userId);
+
+        if (result) {
+            this._messageQueueClient.create(new QueueMessage(QueueConfig.userDeleted, randomUUID(), userId));
+        }
+    }
 }

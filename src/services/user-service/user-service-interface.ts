@@ -12,5 +12,6 @@ export interface IUserService {
         criteria: IUserSearchCriteria,
         lastEvaluatedKey: Record<string, AttributeValue> | undefined,
     ): Promise<IScanResult<IUser>>;
+    deleteUser(userId: string): Promise<void>;
 }
 export const IUserService = Symbol.for("IUserService");

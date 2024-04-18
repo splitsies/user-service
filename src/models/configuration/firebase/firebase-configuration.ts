@@ -1,6 +1,8 @@
 import { assert } from "console";
 import { injectable } from "inversify";
 import { IFirebaseConfiguration } from "./firebase-configuration-interface";
+import { Credential } from "firebase-admin/app";
+import { credential } from "firebase-admin";
 
 @injectable()
 export class FirebaseConfiguration implements IFirebaseConfiguration {
@@ -14,6 +16,7 @@ export class FirebaseConfiguration implements IFirebaseConfiguration {
     readonly devMode: boolean;
     readonly emulatorHost: string;
     readonly authTokenTtlMs: number;
+    readonly credential: Credential;
 
     constructor() {
         assert(!!process.env.FIREBASE_API_KEY, "FIREBASE_API_KEY was undefined");
@@ -36,5 +39,8 @@ export class FirebaseConfiguration implements IFirebaseConfiguration {
         this.devMode = process.env.FIREBASE_DEV_MODE === "true";
         this.emulatorHost = process.env.FIREBASE_EMULATOR_HOST;
         this.authTokenTtlMs = parseInt(process.env.FIREBASE_AUTH_TOKEN_TTL_MS);
+        this.credential = credential.cert(
+            JSON.parse(Buffer.from(process.env.FIREBASE_ADMIN_CREDS, "base64").toString()),
+        );
     }
 }

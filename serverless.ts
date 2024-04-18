@@ -5,6 +5,7 @@ import getById from '@functions/getById';
 import authenticate from '@functions/authenticate';
 import findUsers from "@functions/get";
 import createGuestUser from "@functions/create-guest-user";
+import deleteUser from '@functions/delete';
 
 import dbConfig from 'src/config/db.config.json';
 import firebaseConfig from 'src/config/firebase.config.json';
@@ -27,11 +28,12 @@ const serverlessConfiguration: AWS = {
             AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
             NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
             ...dbConfig,
-            ...firebaseConfig
+            ...firebaseConfig,
+            FIREBASE_AUTH_EMULATOR_HOST: process.env.FIREBASE_AUTH_EMULATOR_HOST,
         },
     },
     // import the function via paths
-    functions: { create, getById, authenticate, findUsers, createGuestUser },
+    functions: { create, getById, authenticate, findUsers, createGuestUser, deleteUser },
     package: { individually: true },
     custom: {
         esbuild: {

@@ -7,7 +7,6 @@ import {
     IScanResult,
     IUserCredential,
     InvalidArgumentsError,
-    ScanResult,
     UserCredential,
 } from "@splitsies/shared-models";
 import { IAuthInteractor } from "src/interactor/auth-interactor-interface";
@@ -101,5 +100,23 @@ export class UserManager implements IUserManager {
         lastEvaluatedKey: Record<string, AttributeValue> | undefined,
     ): Promise<IScanResult<IUser>> {
         return this._userDao.search(criteria, lastEvaluatedKey);
+    }
+
+    async deleteUser(userId: string): Promise<boolean> {
+        try {
+            const user = await this._userDao.read({ id: userId });
+
+            if (!user) {
+                return false;
+            }
+
+            await this._authInteractor.delete(userId);
+            await this._userDao.delete({ id: userId });
+        } catch (e) {
+            this._logger.error(`Unable to delete user ${userId}`, e);
+            return false;
+        }
+
+        return true;
     }
 }
