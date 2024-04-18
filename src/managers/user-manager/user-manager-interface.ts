@@ -13,5 +13,6 @@ export interface IUserManager {
         criteria: IUserSearchCriteria,
         lastEvaluatedKey: Record<string, AttributeValue> | undefined,
     ): Promise<IScanResult<IUser>>;
+    deleteUser(userId: string): Promise<boolean>;
 }
 export const IUserManager = Symbol.for("IUserManager");

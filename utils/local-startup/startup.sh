@@ -6,4 +6,6 @@ sls offline start \
     --param='DB_ENDPOINT=http://localhost:8000/' \
     --param='DB_TABLE_NAME=Splitsies-User-local' \
     --param='FIREBASE_DEV_MODE=true' \
-    --param='MESSAGE_QUEUE_RESOURCE_NAME=Splitsies-MessageQueue-local'
+    --param='MESSAGE_QUEUE_RESOURCE_NAME=Splitsies-MessageQueue-local' \
+    --param="FIREBASE_ADMIN_CREDS=$FIREBASE_ADMIN_CREDS" \
+    --param="FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099"

@@ -29,11 +29,23 @@ For local development, the app is configured to connect to a local firebase auth
 Make sure to use the default port 9099 for the auth emulator. Once that is configured, use the `npm run start-auth` to host the local auth server before running the service.
 
 ### Firebase Admin SDK Emulation
-The Firebase Admin SDK automatically connects to emulator based on the the environment variable being set. 
+The Firebase Admin SDK automatically connects to emulator based on the the environment variable being set. The `startup.sh` script run with `npm run serve` will set the emulator environment variable at startup:
 
 ```    
-export FIREBASE_AUTH_EMULATOR_HOST=http://127.0.0.1:9099
+FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099
 ```
+
+#### !! ACTION REQUIRED !!
+To setup the emulation environment to run locally, the `dev-pr` stage credentials are used. These credentials must be added as an environment variable on your local machine.
+1. Go to the `dev-pr` stage on the firebase console (https://console.firebase.google.com/)
+1. Project overview settings >> Project Settings
+1. Click on Service Accounts
+1. Generate new private key
+1. Encode the contents of the JSON credentials file to base64 and set as an environment variable
+    ```
+    export FIREBASE_ADMIN_CREDS=<BASE64_STRING>
+    ```
+
 ## Querying the local database
 Once the local DB instance is up and running (`npm run recreate-db && npm run start-db`), the DB can be queried given that your `aws cli` is configured.
 
