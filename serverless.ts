@@ -29,8 +29,7 @@ const serverlessConfiguration: AWS = {
             NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
             ...dbConfig,
             ...firebaseConfig,
-            FIREBASE_AUTH_EMULATOR_HOST: "${param:FIREBASE_AUTH_EMULATOR_HOST}",
-            FIREBASE_ADMIN_CREDS: "${param:FIREBASE_ADMIN_CREDS}"
+            FIREBASE_AUTH_EMULATOR_HOST: process.env.FIREBASE_AUTH_EMULATOR_HOST,
         },
     },
     // import the function via paths
