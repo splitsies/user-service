@@ -9,11 +9,8 @@ const logger = container.get<ILogger>(ILogger);
 const userService = container.get<IUserService>(IUserService);
 
 export const main = middyfy(
-    SplitsiesFunctionHandlerFactory.create<typeof schema, IUserCredential>(
-        logger,
-        async (event) => {
-            await userService.deleteUser(event.pathParameters.id);
-            return new DataResponse(HttpStatusCode.OK, null).toJson();
-        },
-    ),
+    SplitsiesFunctionHandlerFactory.create<typeof schema, IUserCredential>(logger, async (event) => {
+        await userService.deleteUser(event.pathParameters.id);
+        return new DataResponse(HttpStatusCode.OK, null).toJson();
+    }),
 );

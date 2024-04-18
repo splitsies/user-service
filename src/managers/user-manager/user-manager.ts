@@ -106,12 +106,14 @@ export class UserManager implements IUserManager {
         try {
             const user = await this._userDao.read({ id: userId });
 
-            if (!user) { return false; }
+            if (!user) {
+                return false;
+            }
 
             await this._authInteractor.delete(userId);
             await this._userDao.delete({ id: userId });
         } catch (e) {
-            this._logger.error(`Unable to delete user ${userId}`, e)
+            this._logger.error(`Unable to delete user ${userId}`, e);
             return false;
         }
 

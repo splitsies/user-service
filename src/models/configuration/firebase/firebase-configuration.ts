@@ -39,6 +39,8 @@ export class FirebaseConfiguration implements IFirebaseConfiguration {
         this.devMode = process.env.FIREBASE_DEV_MODE === "true";
         this.emulatorHost = process.env.FIREBASE_EMULATOR_HOST;
         this.authTokenTtlMs = parseInt(process.env.FIREBASE_AUTH_TOKEN_TTL_MS);
-        this.credential = credential.cert(JSON.parse(Buffer.from(process.env.FIREBASE_ADMIN_CREDS, "base64").toString()));
+        this.credential = credential.cert(
+            JSON.parse(Buffer.from(process.env.FIREBASE_ADMIN_CREDS, "base64").toString()),
+        );
     }
 }
