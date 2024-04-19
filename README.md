@@ -45,7 +45,10 @@ To setup the emulation environment to run locally, the `dev-pr` stage credential
     ```
     export FIREBASE_ADMIN_CREDS=<BASE64_STRING>
     ```
-
+1. Also add the emulator host so the admin SDK knows where data is coming from
+```
+    export FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099
+```
 ## Querying the local database
 Once the local DB instance is up and running (`npm run recreate-db && npm run start-db`), the DB can be queried given that your `aws cli` is configured.
 
