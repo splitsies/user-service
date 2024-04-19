@@ -35,7 +35,10 @@ export class UserService implements IUserService {
             deletedGuestId,
             user: this._expenseUserDetailsMapper.fromUserDto(user.user),
         }));
-        await this._messageQueueClient.create(new QueueMessage(QueueConfig.guestUserReplaced, randomUUID(), payload));
+
+        if (payload.length > 0) {
+            await this._messageQueueClient.create(new QueueMessage(QueueConfig.guestUserReplaced, randomUUID(), payload));
+        }
 
         return user;
     }
