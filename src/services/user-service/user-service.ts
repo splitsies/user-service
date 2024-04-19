@@ -59,7 +59,7 @@ export class UserService implements IUserService {
         const result = await this._userManager.deleteUser(userId);
 
         if (result) {
-            await this._messageQueueClient.create(new QueueMessage<{userId: string}>(QueueConfig.userDeleted, randomUUID(), {userId}));
+            await this._messageQueueClient.create(new QueueMessage(QueueConfig.userDeleted, randomUUID(), userId));
         }
     }
 }
