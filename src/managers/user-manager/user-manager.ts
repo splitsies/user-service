@@ -41,7 +41,7 @@ export class UserManager implements IUserManager {
 
         const userWithFormattedNumber = {
             ...userModel,
-            phoneNumber: userModel.phoneNumber.replace(/\D/g, ""),
+            phoneNumber: userModel.phoneNumber?.replace(/\D/g, ""),
             username: userModel.username.toLowerCase(),
         } as CreateUserRequest;
 

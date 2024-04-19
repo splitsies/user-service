@@ -5,6 +5,7 @@ export default {
             type: "object",
             properties: {
                 givenName: { type: "string" },
+                username: { type: "string" },
                 password: { type: "string" },
                 familyName: { type: "string" },
                 email: { type: "string" },
@@ -12,7 +13,7 @@ export default {
                 dateOfBirth: { type: "string" },
                 middleName: { type: "string" },
             },
-            required: ["password", "givenName", "familyName", "email", "phoneNumber", "dateOfBirth"],
+            required: ["username", "password", "givenName", "familyName", "email"],
         },
     },
 } as const;
