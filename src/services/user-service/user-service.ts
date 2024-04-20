@@ -37,7 +37,9 @@ export class UserService implements IUserService {
         }));
 
         if (payload.length > 0) {
-            await this._messageQueueClient.create(new QueueMessage(QueueConfig.guestUserReplaced, randomUUID(), payload));
+            await this._messageQueueClient.create(
+                new QueueMessage(QueueConfig.guestUserReplaced, randomUUID(), payload),
+            );
         }
 
         return user;

@@ -7,8 +7,8 @@ export class UserDto implements IUserDto {
         readonly givenName: string,
         readonly familyName: string,
         readonly email: string,
-        readonly phoneNumber: string,
-        readonly dateOfBirth: string,
+        readonly phoneNumber?: string,
+        readonly dateOfBirth?: string,
         readonly middleName?: string,
     ) {}
 }

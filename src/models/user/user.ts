@@ -7,8 +7,8 @@ export class User implements IUser {
         readonly givenName: string,
         readonly familyName: string,
         readonly email: string,
-        readonly phoneNumber: string,
-        readonly dateOfBirth: Date,
+        readonly phoneNumber?: string,
+        readonly dateOfBirth?: Date,
         readonly middleName?: string,
     ) {}
 }

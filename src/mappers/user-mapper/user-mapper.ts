@@ -15,7 +15,7 @@ export class UserMapper implements IUserMapper {
             domainModel.familyName,
             domainModel.email,
             domainModel.phoneNumber,
-            domainModel.dateOfBirth.toISOString(),
+            domainModel.dateOfBirth?.toISOString(),
             domainModel.middleName,
         );
     }
@@ -28,7 +28,7 @@ export class UserMapper implements IUserMapper {
             dtoModel.familyName,
             dtoModel.email,
             dtoModel.phoneNumber,
-            new Date(Date.parse(dtoModel.dateOfBirth)),
+            dtoModel.dateOfBirth ? new Date(Date.parse(dtoModel.dateOfBirth)) : null,
             dtoModel.middleName,
         );
     }
