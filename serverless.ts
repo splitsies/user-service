@@ -6,6 +6,7 @@ import authenticate from '@functions/authenticate';
 import findUsers from "@functions/get";
 import createGuestUser from "@functions/create-guest-user";
 import deleteUser from '@functions/delete';
+import populateJoinRequest from '@functions/populate-join-request';
 
 import dbConfig from 'src/config/db.config.json';
 import firebaseConfig from 'src/config/firebase.config.json';
@@ -33,7 +34,7 @@ const serverlessConfiguration: AWS = {
         },
     },
     // import the function via paths
-    functions: { create, getById, authenticate, findUsers, createGuestUser, deleteUser },
+    functions: { create, getById, authenticate, findUsers, createGuestUser, deleteUser, populateJoinRequest },
     package: { individually: true },
     custom: {
         esbuild: {
