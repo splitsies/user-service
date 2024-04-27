@@ -29,6 +29,7 @@ jobs:
             --param="DB_ENDPOINT= https://dynamodb.us-east-1.amazonaws.com/" \
             --param="FIREBASE_DEV_MODE=false" \
             --param="DB_TABLE_NAME=Splitsies-User-production" \
+            --param="MESSAGE_QUEUE_RESOURCE_NAME=Splitsies-MessageQueue-production" \
             --param="INTERNAL_API_KEY=${{ secrets.INTERNAL_API_KEY }}" \
             --param="DB_ACCESS_KEY_ID=${{ secrets.DB_ACCESS_KEY_ID }}" \
             --param="DB_SECRET_ACCESS_KEY=${{ secrets.DB_SECRET_ACCESS_KEY }}" \
