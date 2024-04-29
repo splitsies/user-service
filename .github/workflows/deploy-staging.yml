@@ -29,6 +29,7 @@ jobs:
             --param="DB_ENDPOINT= https://dynamodb.us-east-1.amazonaws.com/" \
             --param="FIREBASE_DEV_MODE=false" \
             --param="DB_TABLE_NAME=Splitsies-User-staging" \
+            --param="MESSAGE_QUEUE_RESOURCE_NAME=Splitsies-MessageQueue-staging" \
             --param="INTERNAL_API_KEY=${{ secrets.INTERNAL_API_KEY }}" \
             --param="DB_ACCESS_KEY_ID=${{ secrets.DB_ACCESS_KEY_ID }}" \
             --param="DB_SECRET_ACCESS_KEY=${{ secrets.DB_SECRET_ACCESS_KEY }}" \
@@ -40,7 +41,7 @@ jobs:
             --param="FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY_STAGING }}" \
             --param="FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET_STAGING }}" \
             --param="FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID_STAGING }}" \
-            --param="FIREBASE_ADMIN_CREDS=${{ secrets.FIREBASE_ADMIN_CREDS_STAGING }}"
+            --param="FIREBASE_ADMIN_CREDS=${{ secrets.FIREBASE_ADMIN_CREDS_JSON_STAGING }}"
       env:
         SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
         AWS_ACCESS_KEY_ID: ${{ secrets.SPLITSIES_DEPLOY_ACCESS_KEY_ID }}

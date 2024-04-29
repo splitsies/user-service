@@ -33,6 +33,7 @@ The Firebase Admin SDK automatically connects to emulator based on the the envir
 
 ```    
 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099
+FIREBASE_USER_EMULATOR_HOST=http://127.0.0.1:9099
 ```
 
 #### !! ACTION REQUIRED !!

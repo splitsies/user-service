@@ -1,3 +1,4 @@
+FIREBASE_USER_EMULATOR_HOST=http://127.0.0.1:9099
 sls offline start \
     --host 0.0.0.0 \
     --param='DB_ACCESS_KEY_ID=null' \

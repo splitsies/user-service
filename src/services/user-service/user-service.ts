@@ -4,6 +4,7 @@ import { IUser } from "src/models/user/user-interface";
 import { IUserManager } from "src/managers/user-manager/user-manager-interface";
 import {
     CreateUserRequest,
+    IExpenseDto,
     IExpenseUserDetailsMapper,
     IScanResult,
     IUserCredential,
@@ -66,5 +67,13 @@ export class UserService implements IUserService {
         if (result) {
             await this._messageQueueClient.create(new QueueMessage(QueueConfig.userDeleted, randomUUID(), userId));
         }
+    }
+
+    async populateJoinRequest(userId: string, expense: IExpenseDto, requestingUserId: string): Promise<void> {
+        const requestingUser = await this._userManager.getUser(requestingUserId);
+
+        await this._messageQueueClient.create(
+            new QueueMessage(QueueConfig.joinRequestNotification, randomUUID(), { userId, expense, requestingUser }),
+        );
     }
 }
