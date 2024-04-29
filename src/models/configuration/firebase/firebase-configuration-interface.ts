@@ -1,17 +1,8 @@
-import { Credential } from "firebase-admin/app";
+import { IFirebaseConfiguration as IFirebaseConfigurationUtils } from "@splitsies/utils";
 
-export interface IFirebaseConfiguration {
-    readonly apiKey: string;
-    readonly authDomain: string;
-    readonly projectId: string;
-    readonly storageBucket: string;
-    readonly messagingSenderId: string;
-    readonly appId: string;
-    readonly measurementId: string;
+export interface IFirebaseConfiguration extends IFirebaseConfigurationUtils {
     readonly devMode: boolean;
-    readonly emulatorHost: string;
     readonly authTokenTtlMs: number;
-    readonly credential: Credential;
 }
 
 export const IFirebaseConfiguration = Symbol.for("IFirebaseConfiguration");
