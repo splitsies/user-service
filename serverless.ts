@@ -31,6 +31,7 @@ const serverlessConfiguration: AWS = {
             ...dbConfig,
             ...firebaseConfig,
             FIREBASE_AUTH_EMULATOR_HOST: process.env.FIREBASE_AUTH_EMULATOR_HOST,
+            FIREBASE_USER_EMULATOR_HOST: process.env.FIREBASE_USER_EMULATOR_HOST,
         },
     },
     // import the function via paths
