@@ -23,7 +23,7 @@ jobs:
       uses: serverless/github-action@v3.1
       with:
         args: deploy --stage dev-pr \
-            --param='QUEUE_STAGE_NAME=devpr' \
+            --param="QUEUE_STAGE_NAME=devpr" \
             --param="DB_REGION=us-east-1" \
             --param="FIREBASE_VPC_MODE=false" \
             --param="DB_SCAN_LIMIT=25" \
