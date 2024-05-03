@@ -1,6 +1,6 @@
 {
   "name": "user-service",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Serverless aws-nodejs-typescript template",
   "main": "serverless.ts",
   "scripts": {
