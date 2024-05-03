@@ -32,6 +32,7 @@ const serverlessConfiguration: AWS = {
             ...firebaseConfig,
             FIREBASE_AUTH_EMULATOR_HOST: process.env.FIREBASE_AUTH_EMULATOR_HOST,
             FIREBASE_USER_EMULATOR_HOST: process.env.FIREBASE_USER_EMULATOR_HOST,
+            STAGE: "${param:QUEUE_STAGE_NAME}",
         },
     },
     // import the function via paths
