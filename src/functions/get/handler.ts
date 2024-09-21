@@ -32,7 +32,7 @@ export const main = middyfy(
         const result = await userService.search(criteria, lastEvaluatedKey);
 
         const scan = new ScanResult(
-            result.result.map((u) => mapper.toDtoModel(u)),
+            result.result.map((u) => mapper.toDa(u)),
             result.lastEvaluatedKey,
         );
 

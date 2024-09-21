@@ -8,7 +8,8 @@
     "serve": "./utils/local-startup/startup.sh",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "tslint -p tsconfig.json",
-    "clear-shared-models": "npm cache clean --force && rm -rf ./node_modules/@splitsies/shared-models && rm -rf ./package-lock.json"
+    "clear-shared-models": "npm cache clean --force && rm -rf ./node_modules/@splitsies/shared-models && rm -rf ./package-lock.json",
+    "clear-utils": "npm cache clean --force && rm -rf ./node_modules/@splitsies/utils && rm -rf ./package-lock.json && npm i"
   },
   "engines": {
     "node": ">=14.15.0"
@@ -19,7 +20,7 @@
     "@middy/http-json-body-parser": "^3.4.0",
     "@splitsies/formatting": "^1.0.0",
     "@splitsies/shared-models": "^0.0.31",
-    "@splitsies/utils": "^0.0.30",
+    "@splitsies/utils": "^0.0.33",
     "firebase": "^10.4.0",
     "firebase-admin": "^11.11.0",
     "inversify": "6.0.1",
