@@ -8,3 +8,7 @@ export interface IUser {
     readonly phoneNumber?: string;
     readonly dateOfBirth?: Date;
 }
+
+export interface Key {
+    readonly id: string;
+}
