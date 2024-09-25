@@ -9,7 +9,8 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "tslint -p tsconfig.json",
     "clear-shared-models": "npm cache clean --force && rm -rf ./node_modules/@splitsies/shared-models && rm -rf ./package-lock.json",
-    "clear-utils": "npm cache clean --force && rm -rf ./node_modules/@splitsies/utils && rm -rf ./package-lock.json && npm i"
+    "clear-utils": "npm cache clean --force && rm -rf ./node_modules/@splitsies/utils && rm -rf ./package-lock.json && npm i",
+    "build": "sam build"
   },
   "engines": {
     "node": ">=14.15.0"
@@ -25,7 +26,8 @@
     "firebase-admin": "^11.11.0",
     "inversify": "6.0.1",
     "mathjs": "^11.8.0",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "esbuild": "^0.14.14"
   },
   "devDependencies": {
     "@serverless/typescript": "^3.0.0",
