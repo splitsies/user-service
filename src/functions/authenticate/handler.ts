@@ -1,6 +1,4 @@
 import "reflect-metadata"
-import { HttpStatusCode, DataResponse, IUserCredential, UserCredential } from "@splitsies/shared-models";
-import { SplitsiesFunctionHandlerFactory, Logger } from "@splitsies/utils";
 import { initializeApp } from "firebase/app";
 import { Auth, getAuth, connectAuthEmulator, signInWithEmailAndPassword } from "firebase/auth";
 import { DynamoDBClient, GetItemCommand } from "@aws-sdk/client-dynamodb";
@@ -13,7 +11,6 @@ class AuthProvider {
             const firebaseApp = initializeApp(firebaseConfig);
             this.auth = getAuth(firebaseApp);
         } else {
-            logger.log("Creating emulated auth");
             initializeApp(firebaseConfig);
             this.auth = getAuth();
             connectAuthEmulator(this.auth, process.env.FIREBASE_USER_EMULATOR_HOST);
@@ -26,7 +23,6 @@ class AuthProvider {
 }
 
 
-const logger = new Logger();
 const firebaseConfiguration = {
     apiKey: process.env.FIREBASE_API_KEY || process.env.FirebaseApiKey,
     authDomain: process.env.FIREBASE_AUTH_DOMAIN || process.env.FirebaseAuthDomain,
@@ -47,32 +43,36 @@ const client = new DynamoDBClient({
 });
 
 
-export const main = SplitsiesFunctionHandlerFactory.create<never, IUserCredential>(logger, async (event) => {
+export const main = async (event) => {
     console.log(event.body);
     const { username, password } = JSON.parse(event.body);
 
-    try {
-        const userCred = await signInWithEmailAndPassword(authProvider.provide(), username, password);
-        const expiresAt = Date.now() + firebaseConfiguration.authTokenTtlMs;
-        const user = await client.send(new GetItemCommand({
-            TableName: process.env.dbTableName,
-            Key: { id: { S: userCred.user.uid } }
-        }));
+    const userCred = await signInWithEmailAndPassword(authProvider.provide(), username, password);
+    const expiresAt = Date.now() + firebaseConfiguration.authTokenTtlMs;
+    const user = await client.send(new GetItemCommand({
+        TableName: process.env.dbTableName,
+        Key: { id: { S: userCred.user.uid } }
+    }));
 
-        const unmarshalledUser = !user.Item ? undefined : {
-            phoneNumber: user.Item.phoneNumber.S,
-            username: user.Item.username.S,
-            dateOfBirth: user.Item.dateOfBirth.S,
-            id: user.Item.id.S,
-            email: user.Item.email.S,
-            familyName: user.Item.familyName.S,
-            givenName: user.Item.givenName.S,
-            middleName: user.Item.middleName.S,
-        };
+    const unmarshalledUser = !user.Item ? undefined : {
+        phoneNumber: user.Item.phoneNumber.S,
+        username: user.Item.username.S,
+        dateOfBirth: user.Item.dateOfBirth.S,
+        id: user.Item.id.S,
+        email: user.Item.email.S,
+        familyName: user.Item.familyName.S,
+        givenName: user.Item.givenName.S,
+        middleName: user.Item.middleName.S,
+    };
 
-        return new DataResponse(HttpStatusCode.OK, new UserCredential(unmarshalledUser, await userCred.user.getIdToken(true), expiresAt)).toJson();
-    } catch (ex) {
-        console.error(ex);
-        throw ex;
+
+    return {
+        statusCode: 200,
+        data: {
+            user: unmarshalledUser,
+            authToken: await userCred.user.getIdToken(true),
+            expiresAt
+        },
+        success: true
     }
-});
+};
