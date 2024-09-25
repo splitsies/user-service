@@ -1,0 +1,140 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  notification-service
+
+  SAM Template for notification-service
+
+Parameters:
+  FirebaseApiKey:
+    Type: String
+  FirebaseAuthDomain:
+    Type: String
+  FirebaseProjectId:
+    Type: String
+  FirebaseStorageBucket:
+    Type: String
+  FirebaseMessagingSenderId:
+    Type: String
+  FirebaseAppId:
+    Type: String
+  FirebaseMeasurementId:
+    Type: String
+  FirebaseAdminCreds:
+    Type: String
+  Stage:
+    Type: String
+  dbRegion:
+    Type: String
+  dbEndpoint:
+    Type: String
+  dbTableName:
+    Type: String
+  MessageQueueStreamArn:
+    Type: String
+  messageQueueResourceName:
+    Type: String
+  JoinRequestNotificationQueue:
+    Type: String
+    Default: 39E552E9-0045-4210-9582-80E96553F95C
+  ResourceAccountId:
+    Type: String
+  ResourceRegion:
+    Type: String
+    Default: us-east-1
+
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 30    
+    MemorySize: 2048
+
+    # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
+    # LoggingConfig:
+    #   LogFormat: JSON
+
+    Environment:
+      Variables:
+        FirebaseApiKey: !Ref FirebaseApiKey
+        FirebaseAuthDomain: !Ref FirebaseAuthDomain
+        FirebaseProjectId: !Ref FirebaseProjectId
+        FirebaseStorageBucket: !Ref FirebaseStorageBucket
+        FirebaseMessagingSenderId: !Ref FirebaseMessagingSenderId
+        FirebaseAppId: !Ref FirebaseAppId
+        FirebaseMeasurementId: !Ref FirebaseMeasurementId
+        FirebaseAdminCreds: !Ref FirebaseAdminCreds
+        Stage: !Ref Stage
+        dbRegion: !Ref dbRegion
+        dbEndpoint: !Ref dbEndpoint
+        dbTableName: !Ref dbTableName
+        FireBaseAuthTokenTtlMs: 3600
+        messageQueueResourceName: !Ref messageQueueResourceName
+
+Resources:
+  UserServiceApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Sub ${Stage}
+
+  # IAM Role for Lambda to allow invocation by SNS
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaSNSInvokePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              # Permissions to create and manage logs
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: arn:aws:logs:*:*:*
+
+              # Allow Lambda to receive SNS messages
+              - Effect: Allow
+                Action: sns:Publish
+                Resource: !Sub arn:aws:sns:${ResourceRegion}:${ResourceAccountId}:UserConnected
+
+              # Permission for Lambda to read from DynamoDB table
+              - Effect: Allow
+                Action:
+                  - dynamodb:*
+                Resource: !Sub arn:aws:dynamodb:${ResourceRegion}:${ResourceAccountId}:User
+
+  AuthenticateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/functions/authenticate
+      Handler: handler.main
+      Runtime: nodejs18.x
+      Architectures:
+      - x86_64
+      Events:
+        Notify:
+          Type: Api
+          Properties:
+            Path: /users/auth
+            Method: post
+            RestApiId: !Ref UserServiceApi
+    Metadata: # Manage esbuild properties
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: true
+        EntryPoints:
+        - handler.ts
+        External:
+        - node_modules
+        - aws-sdk

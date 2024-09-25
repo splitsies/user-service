@@ -5,11 +5,11 @@
   "main": "serverless.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "./utils/local-startup/startup.sh",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "tslint -p tsconfig.json",
     "clear-shared-models": "npm cache clean --force && rm -rf ./node_modules/@splitsies/shared-models && rm -rf ./package-lock.json",
-    "clear-utils": "npm cache clean --force && rm -rf ./node_modules/@splitsies/utils && rm -rf ./package-lock.json && npm i"
+    "clear-utils": "npm cache clean --force && rm -rf ./node_modules/@splitsies/utils && rm -rf ./package-lock.json && npm i",
+    "serve": "sam build && sam local start-api --host 0.0.0.0 --port 6001 --env-vars ./local-startup/env.json"
   },
   "engines": {
     "node": ">=14.15.0"
