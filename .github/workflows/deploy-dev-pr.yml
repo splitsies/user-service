@@ -50,8 +50,8 @@ jobs:
 
     - run: npm ci
 
-    - run: sam build
-    
+    - run: npm run build
+
     - name: Deploy to us-east-1 (SAM Deploy)
       run: |
         PARAMETERS=$(cat parameters.cfg)
