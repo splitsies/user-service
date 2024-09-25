@@ -25,6 +25,7 @@ const middyfy = (handler) => {
 
 export const main = middyfy(
     SplitsiesFunctionHandlerFactory.create<typeof schema, IUserCredential>(logger, async (event) => {
+        console.log(event);
         try {
             const auth = authProvider.provide();
             const userCred = await signInWithEmailAndPassword(auth, event.body.username, event.body.password);

@@ -15,6 +15,7 @@ const mapper = container.get<IUserMapper>(IUserMapper);
 
 export const main = middyfy(
     SplitsiesFunctionHandlerFactory.create<typeof schema, IUserDto[] | IScanResult<IUserDto>>(logger, async (event) => {
+        console.log(event);
         const { phoneNumbers, ids, filter } = event.queryStringParameters;
         if (!phoneNumbers && !ids && !filter) {
             return new DataResponse(HttpStatusCode.BAD_REQUEST, null).toJson();
