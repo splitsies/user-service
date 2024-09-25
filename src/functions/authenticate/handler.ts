@@ -1,25 +1,77 @@
-import schema from "./schema";
-import { middyfy } from "../../libs/lambda";
-import { container } from "../../di/inversify.config";
-import { HttpStatusCode, DataResponse, IUserCredential } from "@splitsies/shared-models";
-import { SplitsiesFunctionHandlerFactory, ILogger } from "@splitsies/utils";
-import { IUserService } from "src/services/user-service/user-service-interface";
-import { InvalidAuthError } from "src/models/errors";
+import { HttpStatusCode, DataResponse, IUserCredential, UserCredential } from "@splitsies/shared-models";
+import { SplitsiesFunctionHandlerFactory, Logger } from "@splitsies/utils";
+import { initializeApp } from "firebase/app";
+import { Auth, getAuth, connectAuthEmulator, signInWithEmailAndPassword } from "firebase/auth";
+import { DynamoDBClient, GetItemCommand } from "@aws-sdk/client-dynamodb";
 
-const logger = container.get<ILogger>(ILogger);
-const userService = container.get<IUserService>(IUserService);
+class AuthProvider {
+    private readonly auth: Auth;
 
-export const main = middyfy(
-    SplitsiesFunctionHandlerFactory.create<typeof schema, IUserCredential>(logger, async (event) => {
-        try {
-            const result = await userService.authenticateUser(event.body.username, event.body.password);
-            return new DataResponse(HttpStatusCode.OK, result).toJson();
-        } catch (ex) {
-            if (ex instanceof InvalidAuthError) {
-                return new DataResponse(HttpStatusCode.UNAUTHORIZED, "Could not authenticate user").toJson();
-            }
-
-            throw ex;
+    constructor(firebaseConfig) {
+        if (!firebaseConfig.devMode) {
+            const firebaseApp = initializeApp(firebaseConfig);
+            this.auth = getAuth(firebaseApp);
+        } else {
+            logger.log("Creating emulated auth");
+            initializeApp(firebaseConfig);
+            this.auth = getAuth();
+            connectAuthEmulator(this.auth, process.env.FIREBASE_USER_EMULATOR_HOST);
         }
-    }),
-);
+    }
+
+    provide(): Auth {
+        return this.auth;
+    }
+}
+
+
+const logger = new Logger();
+const firebaseConfiguration = {
+    apiKey: process.env.FIREBASE_API_KEY || process.env.FirebaseApiKey,
+    authDomain: process.env.FIREBASE_AUTH_DOMAIN || process.env.FirebaseAuthDomain,
+    projectId: process.env.FIREBASE_PROJECT_ID || process.env.FirebaseProjectId,
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET || process.env.FirebaseStorageBucket,
+    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || process.env.FirebaseMessagingSenderId,
+    appId: process.env.FIREBASE_APP_ID || process.env.FirebaseAppId,
+    measurementId: process.env.FIREBASE_MEASUREMENT_ID || process.env.FirebaseMeasurementId,
+    emulatorHost: process.env.FIREBASE_AUTH_EMULATOR_HOST || process.env.FirebaseAuthEmulatorHost,
+    authTokenTtlMs: parseInt(process.env.FireBaseAuthTokenTtlMs)
+}
+
+const authProvider = new AuthProvider(firebaseConfiguration)
+
+const client = new DynamoDBClient({
+    region: process.env.dbRegion,
+    endpoint: process.env.dbEndpoint,
+});
+
+
+export const main = SplitsiesFunctionHandlerFactory.create<typeof never, IUserCredential>(logger, async (event) => {
+    console.log(event.body);
+    const { username, password } = JSON.parse(event.body);
+
+    try {
+        const userCred = await signInWithEmailAndPassword(authProvider.provide(), username, password);
+        const expiresAt = Date.now() + firebaseConfiguration.authTokenTtlMs;
+        const user = await client.send(new GetItemCommand({
+            TableName: process.env.dbTableName,
+            Key: { id: { S: userCred.user.uid } }
+        }));
+
+        const unmarshalledUser = !user.Item ? undefined : {
+            phoneNumber: user.Item.phoneNumber.S,
+            username: user.Item.username.S,
+            dateOfBirth: user.Item.dateOfBirth.S,
+            id: user.Item.id.S,
+            email: user.Item.email.S,
+            familyName: user.Item.familyName.S,
+            givenName: user.Item.givenName.S,
+            middleName: user.Item.middleName.S,
+        };
+
+        return new DataResponse(HttpStatusCode.OK, new UserCredential(unmarshalledUser, await userCred.user.getIdToken(true), expiresAt)).toJson();
+    } catch (ex) {
+        console.error(ex);
+        throw ex;
+    }
+});
