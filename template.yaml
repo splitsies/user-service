@@ -118,7 +118,7 @@ Resources:
   AuthenticateFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: .
+      CodeUri: ./src
       Handler: handler.main
       Runtime: nodejs18.x
       Architectures:
@@ -139,7 +139,7 @@ Resources:
         Target: es2020
         Sourcemap: true
         EntryPoints:
-        - src/functions/authenticate/handler.ts
+        - functions/authenticate/handler.ts
         External:
         - node_modules
         - aws-sdk

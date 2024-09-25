@@ -3,8 +3,8 @@ import { middyfy } from "../../libs/lambda";
 import { container } from "../../di/inversify.config";
 import { HttpStatusCode, DataResponse, IUserCredential } from "@splitsies/shared-models";
 import { SplitsiesFunctionHandlerFactory, ILogger } from "@splitsies/utils";
-import { IUserService } from "src/services/user-service/user-service-interface";
-import { InvalidAuthError } from "src/models/errors";
+import { IUserService } from "../../services/user-service/user-service-interface";
+import { InvalidAuthError } from "../../models/errors";
 
 const logger = container.get<ILogger>(ILogger);
 const userService = container.get<IUserService>(IUserService);
