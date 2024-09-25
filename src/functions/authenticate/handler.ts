@@ -1,3 +1,4 @@
+import "reflect-metadata"
 import { HttpStatusCode, DataResponse, IUserCredential, UserCredential } from "@splitsies/shared-models";
 import { SplitsiesFunctionHandlerFactory, Logger } from "@splitsies/utils";
 import { initializeApp } from "firebase/app";
@@ -46,7 +47,7 @@ const client = new DynamoDBClient({
 });
 
 
-export const main = SplitsiesFunctionHandlerFactory.create<typeof never, IUserCredential>(logger, async (event) => {
+export const main = SplitsiesFunctionHandlerFactory.create<never, IUserCredential>(logger, async (event) => {
     console.log(event.body);
     const { username, password } = JSON.parse(event.body);
 
