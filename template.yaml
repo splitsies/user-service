@@ -71,6 +71,8 @@ Globals:
         dbTableName: !Ref dbTableName
         FireBaseAuthTokenTtlMs: 3600
         messageQueueResourceName: !Ref messageQueueResourceName
+        MessageQueueStreamArn: !Ref MessageQueueStreamArn
+        JoinRequestNotificationQueue: !Ref JoinRequestNotificationQueue
 
 Resources:
   UserServiceApi:
@@ -121,6 +123,7 @@ Resources:
       Runtime: nodejs18.x
       Architectures:
       - x86_64
+      Role: !GetAtt LambdaExecutionRole.Arn
       Events:
         Notify:
           Type: Api
@@ -133,9 +136,38 @@ Resources:
       BuildProperties:
         Minify: true
         Target: es2020
-        Sourcemap: true
+        Sourcemap: false
         EntryPoints:
         - handler.ts
         External:
         - node_modules
         - aws-sdk
+
+  FindUsersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: handler.main
+      Runtime: nodejs18.x
+      Architectures:
+      - x86_64
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Events:
+        Notify:
+          Type: Api
+          Properties:
+            Path: /users
+            Method: get
+            RestApiId: !Ref UserServiceApi
+    Metadata: # Manage esbuild properties
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: true
+        EntryPoints:
+        - src/functions/get/handler.ts
+        External:
+        - node_modules
+        - aws-sdk
+
