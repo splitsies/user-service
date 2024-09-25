@@ -111,7 +111,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - dynamodb:*
-                Resource: !Sub arn:aws:dynamodb:${ResourceRegion}:${ResourceAccountId}:User
+                Resource: !Sub arn:aws:dynamodb:${ResourceRegion}:${ResourceAccountId}:table/User
 
   AuthenticateFunction:
     Type: AWS::Serverless::Function
