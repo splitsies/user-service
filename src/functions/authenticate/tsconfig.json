@@ -12,7 +12,7 @@
       "resolveJsonModule": true, // import configuration json files
       "esModuleInterop": true, // import configuration json files
     },
-    "include": ["**/*.ts"],
+    "include": ["./**/*.ts"],
     "exclude": [
       "node_modules/**/*",
       ".webpack/**/*",
