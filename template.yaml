@@ -136,7 +136,7 @@ Resources:
       BuildProperties:
         Minify: true
         Target: es2020
-        Sourcemap: false
+        Sourcemap: true
         EntryPoints:
         - handler.ts
         External:
