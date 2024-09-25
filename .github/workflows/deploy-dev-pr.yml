@@ -24,9 +24,8 @@ jobs:
     - name: Create Common Parameter Overrides
       run: | 
         echo -n "\"Stage=dev\" " >> parameters.cfg
-        echo -n "\"MessageQueueStreamArn=null\" " >> parameters.cfg
+        echo -n "\"MessageQueueStreamArn=arn:ddb\" " >> parameters.cfg
         echo -n "\"messageQueueResourceName=MessageQueue\" " >> parameters.cfg
-        echo -n "\"dbEndpoint=https://dynamodb.us-east-1.amazonaws.com/\" " >> parameters.cfg
         echo -n "\"dbTableName=User\" " >> parameters.cfg
         echo -n "\"dbRegion=us-east-1\" " >> parameters.cfg
         echo -n "\"FirebaseApiKey=${{ secrets.FIREBASE_API_KEY_DEV_PR }}\" " >> parameters.cfg
@@ -52,8 +51,8 @@ jobs:
 
     - name: Deploy to us-east-1 (SAM Deploy)
       run: |
-        cat parameters.cfg
         PARAMETERS=$(cat parameters.cfg)
+        echo $PARAMETERS
         sam deploy --stack-name user-service \
         --region us-east-1 \
         --no-confirm-changeset \

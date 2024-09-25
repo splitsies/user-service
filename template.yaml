@@ -1,9 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  notification-service
+  user-service
 
-  SAM Template for notification-service
+  SAM Template for user-service
 
 Parameters:
   FirebaseApiKey:
@@ -28,6 +28,7 @@ Parameters:
     Type: String
   dbEndpoint:
     Type: String
+    Default: https://dynamodb.us-east-1.amazonaws.com/
   dbTableName:
     Type: String
   MessageQueueStreamArn:
