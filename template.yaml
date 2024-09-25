@@ -140,6 +140,9 @@ Resources:
         EntryPoints:
         - handler.ts
         External:
+        - .esbuild
+        - .github
+        - .serverless
         - node_modules
         - aws-sdk
 
@@ -168,6 +171,9 @@ Resources:
         EntryPoints:
         - src/functions/get/handler.ts
         External:
+        - .esbuild
+        - .github
+        - .serverless
         - node_modules
         - aws-sdk
 
