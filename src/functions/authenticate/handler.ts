@@ -68,11 +68,14 @@ export const main = async (event) => {
 
     return {
         statusCode: 200,
-        data: {
-            user: unmarshalledUser,
-            authToken: await userCred.user.getIdToken(true),
-            expiresAt
-        },
-        success: true
-    }
+        body: JSON.stringify({
+            statusCode: 200,
+            data: {
+                user: unmarshalledUser,
+                authToken: await userCred.user.getIdToken(true),
+                expiresAt
+            },
+            success: true
+        }),
+    };
 };

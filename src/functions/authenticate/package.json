@@ -18,7 +18,6 @@
   "prettier": "@splitsies/formatting",
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.658.1",
-    "@splitsies/utils": "^0.0.33",
     "esbuild": "^0.14.11",
     "firebase": "^10.4.0",
     "inversify": "6.0.1",
