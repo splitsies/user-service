@@ -143,7 +143,3 @@ Resources:
         External:
         - node_modules
         - aws-sdk
-        - .esbuild
-        - .github
-        - .serverless
-        - ./src/tesseract

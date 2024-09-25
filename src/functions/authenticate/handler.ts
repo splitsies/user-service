@@ -11,6 +11,7 @@ const userService = container.get<IUserService>(IUserService);
 
 export const main = middyfy(
     SplitsiesFunctionHandlerFactory.create<typeof schema, IUserCredential>(logger, async (event) => {
+        console.log(event);
         try {
             const result = await userService.authenticateUser(event.body.username, event.body.password);
             return new DataResponse(HttpStatusCode.OK, result).toJson();
