@@ -39,6 +39,7 @@ jobs:
         params="FirebaseMeasurementId=${{ secrets.FIREBASE_MEASUREMENT_ID_DEV_PR }} ${params}"
         params="FirebaseAdminCreds=${{ secrets.FIREBASE_ADMIN_CREDS_DEV_PR }} ${params}"
         params="ResourceAccountId=${{ secrets.DEV_ACCOUNT_ID }} ${params}"
+        echo $params > parameters.cfg
 
     - uses: actions/setup-python@v3
     - uses: aws-actions/setup-sam@v2
@@ -55,7 +56,6 @@ jobs:
     - name: Deploy to us-east-1 (SAM Deploy)
       run: |
         PARAMETERS=$(cat parameters.cfg)
-        echo $PARAMETERS
         sam deploy --stack-name user-service \
         --region us-east-1 \
         --no-confirm-changeset \
