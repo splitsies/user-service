@@ -26,11 +26,11 @@ jobs:
         params=
         params="Stage=dev ${params}"
         params="QueueStageName=dev ${params}"
-        params="MessageQueueStreamArn=arn:ddb ${params}"
         params="messageQueueResourceName=MessageQueue ${params}"
         params="dbTableName=User ${params}"
         params="dbRegion=us-east-1 ${params}"
         params="dbEndpoint=https://dynamodb.us-east-1.amazonaws.com/ ${params}"
+        params="MessageQueueStreamArn=${{ secrets.MESSAGE_QUEUE_ARN_DEV_PR }}${params}"
         params="FirebaseApiKey=${{ secrets.FIREBASE_API_KEY_DEV_PR }} ${params}"
         params="FirebaseAuthDomain=${{ secrets.FIREBASE_AUTH_DOMAIN_DEV_PR }} ${params}"
         params="FirebaseProjectId=${{ secrets.FIREBASE_PROJECT_ID_DEV_PR }} ${params}"
