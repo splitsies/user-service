@@ -69,7 +69,7 @@ Globals:
         dbRegion: !Ref dbRegion
         dbEndpoint: !Ref dbEndpoint
         dbTableName: !Ref dbTableName
-        FireBaseAuthTokenTtlMs: 3600
+        FireBaseAuthTokenTtlMs: 3600000
         messageQueueResourceName: !Ref messageQueueResourceName
         MessageQueueStreamArn: !Ref MessageQueueStreamArn
         JoinRequestNotificationQueue: !Ref JoinRequestNotificationQueue
