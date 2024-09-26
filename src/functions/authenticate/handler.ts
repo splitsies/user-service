@@ -1,27 +1,8 @@
 import "reflect-metadata"
-import { initializeApp } from "firebase/app";
-import { Auth, getAuth, connectAuthEmulator, signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { DynamoDBClient, GetItemCommand } from "@aws-sdk/client-dynamodb";
-
-class AuthProvider {
-    private readonly auth: Auth;
-
-    constructor(firebaseConfig) {
-        if (!firebaseConfig.devMode) {
-            const firebaseApp = initializeApp(firebaseConfig);
-            this.auth = getAuth(firebaseApp);
-        } else {
-            initializeApp(firebaseConfig);
-            this.auth = getAuth();
-            connectAuthEmulator(this.auth, process.env.FIREBASE_USER_EMULATOR_HOST);
-        }
-    }
-
-    provide(): Auth {
-        return this.auth;
-    }
-}
-
+import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
+import { AuthProvider } from "./auth-provider";
 
 const firebaseConfiguration = {
     apiKey: process.env.FIREBASE_API_KEY || process.env.FirebaseApiKey,
@@ -37,17 +18,24 @@ const firebaseConfiguration = {
 
 const authProvider = new AuthProvider(firebaseConfiguration)
 
+const snsClient = new SNSClient({ region: process.env.dbRegion });
 const client = new DynamoDBClient({
     region: process.env.dbRegion,
     endpoint: process.env.dbEndpoint,
 });
 
-
+/**
+ * reducing package references for maximum performance
+ */
 export const main = async (event) => {
-    console.log(event.body);
     const { username, password } = JSON.parse(event.body);
 
     const userCred = await signInWithEmailAndPassword(authProvider.provide(), username, password);
+    await snsClient.send(new PublishCommand({
+        TopicArn: process.env.UserConnectedTopicArn,
+        Message: JSON.stringify({ data: process.env.RtRegion ?? "us-east-1" }),
+    }));
+    
     const expiresAt = Date.now() + firebaseConfiguration.authTokenTtlMs;
     const user = await client.send(new GetItemCommand({
         TableName: process.env.dbTableName,
@@ -64,7 +52,6 @@ export const main = async (event) => {
         givenName: user.Item.givenName.S,
         middleName: user.Item.middleName.S,
     };
-
 
     return {
         statusCode: 200,

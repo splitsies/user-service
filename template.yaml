@@ -73,6 +73,8 @@ Globals:
         messageQueueResourceName: !Ref messageQueueResourceName
         MessageQueueStreamArn: !Ref MessageQueueStreamArn
         JoinRequestNotificationQueue: !Ref JoinRequestNotificationQueue
+        RtRegion: !Sub ${AWS::Region}
+        UserConnectedTopicArn: !Sub arn:aws:sns:${ResourceRegion}:${ResourceAccountId}:UserConnected
 
 Resources:
   UserServiceApi:
