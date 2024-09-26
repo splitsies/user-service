@@ -172,5 +172,113 @@ Resources:
         External:
         - node_modules
         - aws-sdk
+  CreateUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src
+      Handler: handler.main
+      Runtime: nodejs18.x
+      Architectures:
+      - x86_64
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Events:
+        Notify:
+          Type: Api
+          Properties:
+            Path: /users
+            Method: post
+            RestApiId: !Ref UserServiceApi
+    Metadata: # Manage esbuild properties
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: false
+        EntryPoints:
+        - functions/create/handler.ts
+        External:
+        - node_modules
+        - aws-sdk
+  CreateGuestUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src
+      Handler: handler.main
+      Runtime: nodejs18.x
+      Architectures:
+      - x86_64
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Events:
+        Notify:
+          Type: Api
+          Properties:
+            Path: /users/guests
+            Method: post
+            RestApiId: !Ref UserServiceApi
+    Metadata: # Manage esbuild properties
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: false
+        EntryPoints:
+        - functions/create-guest-user/handler.ts
+        External:
+        - node_modules
+        - aws-sdk
+  DeleteUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src
+      Handler: handler.main
+      Runtime: nodejs18.x
+      Architectures:
+      - x86_64
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Events:
+        Notify:
+          Type: Api
+          Properties:
+            Path: /users/{id}
+            Method: delete
+            RestApiId: !Ref UserServiceApi
+    Metadata: # Manage esbuild properties
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: false
+        EntryPoints:
+        - functions/delete/handler.ts
+        External:
+        - node_modules
+        - aws-sdk
+  GetUserByIdFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src
+      Handler: handler.main
+      Runtime: nodejs18.x
+      Architectures:
+      - x86_64
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Events:
+        Notify:
+          Type: Api
+          Properties:
+            Path: /users/{id}
+            Method: get
+            RestApiId: !Ref UserServiceApi
+    Metadata: # Manage esbuild properties
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: false
+        EntryPoints:
+        - functions/getById/handler.ts
+        External:
+        - node_modules
+        - aws-sdk
         
 
