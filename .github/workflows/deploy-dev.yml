@@ -25,6 +25,7 @@ jobs:
       run: | 
         params=
         params="Stage=dev ${params}"
+        params="QueueStageName=dev ${params}"
         params="MessageQueueStreamArn=arn:ddb ${params}"
         params="messageQueueResourceName=MessageQueue ${params}"
         params="dbTableName=User ${params}"

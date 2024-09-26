@@ -115,7 +115,10 @@ Resources:
               - Effect: Allow
                 Action:
                   - dynamodb:*
-                Resource: !Sub arn:aws:dynamodb:${ResourceRegion}:${ResourceAccountId}:table/User
+                Resource: 
+                  - !Sub arn:aws:dynamodb:${ResourceRegion}:${ResourceAccountId}:table/User
+                  - !Sub arn:aws:dynamodb:${ResourceRegion}:${ResourceAccountId}:table/${messageQueueResourceName}
+                  - !Sub ${MessageQueueStreamArn}
 
   AuthenticateFunction:
     Type: AWS::Serverless::Function
@@ -280,5 +283,26 @@ Resources:
         External:
         - node_modules
         - aws-sdk
+  PopulateJoinRequestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: handler.main
+      Runtime: nodejs18.x
+      Architectures:
+      - x86_64
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Events:
+        Notify:
+          Type: DynamoDB
+          Properties:
+            Stream: !Sub ${MessageQueueStreamArn}
+            MaximumRetryAttempts: 3
+            MaximumRecordAgeInSeconds: 60
+            StartingPosition: LATEST
+            Enabled: true
+            FilterCriteria:
+              Filters:
+                - Pattern: !Sub "{\"eventName\":[\"INSERT\"],\"dynamodb\":{\"Keys\":{\"queueName\":{\"S\":[\"${JoinRequestNotificationQueue}\"]}},\"NewImage\":{\"stage\":{\"S\":[\"${Stage}\"]}}}}"
         
 
