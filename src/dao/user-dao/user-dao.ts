@@ -47,10 +47,7 @@ export class UserDao extends DaoBase<IUserDto, Key, IUser> implements IUserDao {
             }),
         );
 
-        const scan = new ScanResult(
-            this.unmarshallResults(result),
-            result.LastEvaluatedKey ?? null,
-        );
+        const scan = new ScanResult(this.unmarshallResults(result), result.LastEvaluatedKey ?? null);
 
         return scan;
     }

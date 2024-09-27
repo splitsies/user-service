@@ -6,7 +6,7 @@ import { UserDto } from "src/models/user-dto/user-dto";
 import { User } from "src/models/user/user";
 
 @injectable()
-export class UserMapper implements IUserMapper {    
+export class UserMapper implements IUserMapper {
     toDa(domain: IUser): IUserDto {
         return new UserDto(
             domain.id,
