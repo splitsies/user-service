@@ -285,7 +285,7 @@ Resources:
   PopulateJoinRequestFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/
+      CodeUri: src
       Handler: handler.main
       Runtime: nodejs18.x
       Architectures:
@@ -303,5 +303,16 @@ Resources:
             FilterCriteria:
               Filters:
                 - Pattern: !Sub "{\"eventName\":[\"INSERT\"],\"dynamodb\":{\"Keys\":{\"queueName\":{\"S\":[\"${JoinRequestQueue}\"]}},\"NewImage\":{\"stage\":{\"S\":[\"${Stage}\"]}}}}"
+    Metadata: # Manage esbuild properties
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: false
+        EntryPoints:
+        - functions/popluate-join-request/handler.ts
+        External:
+        - node_modules
+        - aws-sdk
         
 
