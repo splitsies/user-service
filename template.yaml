@@ -35,9 +35,9 @@ Parameters:
     Type: String
   messageQueueResourceName:
     Type: String
-  JoinRequestNotificationQueue:
+  JoinRequestQueue:
     Type: String
-    Default: 39E552E9-0045-4210-9582-80E96553F95C
+    Default: 0B39C186-89FB-4158-9CF3-2FBFBCF2A6B9
   ResourceAccountId:
     Type: String
   ResourceRegion:
@@ -72,7 +72,6 @@ Globals:
         FireBaseAuthTokenTtlMs: 3600000
         messageQueueResourceName: !Ref messageQueueResourceName
         MessageQueueStreamArn: !Ref MessageQueueStreamArn
-        JoinRequestNotificationQueue: !Ref JoinRequestNotificationQueue
         RtRegion: !Sub ${AWS::Region}
         UserConnectedTopicArn: !Sub arn:aws:sns:${ResourceRegion}:${ResourceAccountId}:UserConnected
 
@@ -286,7 +285,7 @@ Resources:
   PopulateJoinRequestFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/
+      CodeUri: src
       Handler: handler.main
       Runtime: nodejs18.x
       Architectures:
@@ -303,6 +302,17 @@ Resources:
             Enabled: true
             FilterCriteria:
               Filters:
-                - Pattern: !Sub "{\"eventName\":[\"INSERT\"],\"dynamodb\":{\"Keys\":{\"queueName\":{\"S\":[\"${JoinRequestNotificationQueue}\"]}},\"NewImage\":{\"stage\":{\"S\":[\"${Stage}\"]}}}}"
+                - Pattern: !Sub "{\"eventName\":[\"INSERT\"],\"dynamodb\":{\"Keys\":{\"queueName\":{\"S\":[\"${JoinRequestQueue}\"]}},\"NewImage\":{\"stage\":{\"S\":[\"${Stage}\"]}}}}"
+    Metadata: # Manage esbuild properties
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: false
+        EntryPoints:
+        - functions/populate-join-request/handler.ts
+        External:
+        - node_modules
+        - aws-sdk
         
 

@@ -43,14 +43,14 @@ export const main = async (event) => {
     }));
 
     const unmarshalledUser = !user.Item ? undefined : {
-        phoneNumber: user.Item.phoneNumber.S,
-        username: user.Item.username.S,
-        dateOfBirth: user.Item.dateOfBirth.S,
-        id: user.Item.id.S,
-        email: user.Item.email.S,
-        familyName: user.Item.familyName.S,
-        givenName: user.Item.givenName.S,
-        middleName: user.Item.middleName.S,
+        phoneNumber: user.Item.phoneNumber?.S,
+        username: user.Item.username?.S,
+        dateOfBirth: user.Item.dateOfBirth?.S,
+        id: user.Item.id?.S,
+        email: user.Item.email?.S,
+        familyName: user.Item.familyName?.S,
+        givenName: user.Item.givenName?.S,
+        middleName: user.Item.middleName?.S,
     };
 
     return {
