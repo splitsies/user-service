@@ -13,10 +13,9 @@
       "resolveJsonModule": true, // import configuration json files
       "esModuleInterop": true, // import configuration json files
     },
-    "include": ["src/**/*.ts", "serverless.ts"],
+    "include": ["src/**/*.ts"],
     "exclude": [
       "node_modules/**/*",
-      ".serverless/**/*",
       ".webpack/**/*",
       "_warmup/**/*",
       ".vscode/**/*"
