@@ -35,6 +35,7 @@ Parameters:
     Type: String
   messageQueueResourceName:
     Type: String
+    Default: MessageQueue
   JoinRequestQueue:
     Type: String
     Default: 0B39C186-89FB-4158-9CF3-2FBFBCF2A6B9
