@@ -25,5 +25,3 @@ Resources:
               - dynamodb:DeleteItem
             Resource: 
               - !Sub arn:aws:dynamodb:${dbRegion}:${AWS::AccountId}:table/User
-      Roles:
-        - !Ref StagingAccountRole
