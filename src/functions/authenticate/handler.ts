@@ -14,11 +14,12 @@ const firebaseConfiguration = {
     measurementId: process.env.FIREBASE_MEASUREMENT_ID || process.env.FirebaseMeasurementId,
     emulatorHost: process.env.FIREBASE_AUTH_EMULATOR_HOST || process.env.FirebaseAuthEmulatorHost,
     authTokenTtlMs: parseInt(process.env.FireBaseAuthTokenTtlMs),
+    devMode: process.env.Stage === "local",
 };
 
 const authProvider = new AuthProvider(firebaseConfiguration);
-
 const snsClient = new SNSClient({ region: process.env.dbRegion });
+
 const client = new DynamoDBClient({
     region: process.env.dbRegion,
     endpoint: process.env.dbEndpoint,
@@ -31,12 +32,14 @@ export const main = async (event) => {
     const { username, password } = JSON.parse(event.body);
 
     const userCred = await signInWithEmailAndPassword(authProvider.provide(), username, password);
-    await snsClient.send(
-        new PublishCommand({
-            TopicArn: process.env.UserConnectedTopicArn,
-            Message: JSON.stringify({ data: process.env.RtRegion ?? "us-east-1" }),
-        }),
-    );
+    if (process.env.Stage !== "local") {
+        await snsClient.send(
+            new PublishCommand({
+                TopicArn: process.env.UserConnectedTopicArn,
+                Message: JSON.stringify({ data: process.env.RtRegion ?? "us-east-1" }),
+            }),
+        );
+    }
 
     const expiresAt = Date.now() + firebaseConfiguration.authTokenTtlMs;
     const user = await client.send(
