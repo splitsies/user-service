@@ -83,6 +83,7 @@ jobs:
 
     - run: |
         sam deploy --stack-name user-service-database-staging-access \
+        --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM"
         --no-confirm-changeset \
         --no-fail-on-empty-changeset \
         --parameter-overrides "dbRegion=us-east-1" "StagingUserServiceLambdaExecutionRoleArn=${{ secrets.STAGING_USER_SERVICE_LAMBDA_EXECUTION_ROLE_ARN }}"
