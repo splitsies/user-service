@@ -69,22 +69,22 @@ jobs:
     - run: sam build
       working-directory: ./database
 
-    # - run: |
-    #     sam deploy --stack-name user-service-database \
-    #     --no-confirm-changeset \
-    #     --no-fail-on-empty-changeset        
-    #   working-directory: ./database
+    - run: |
+        sam deploy --stack-name user-service-database \
+        --no-confirm-changeset \
+        --no-fail-on-empty-changeset        
+      working-directory: ./database
 
-    # - run: npm ci
-    #   working-directory: ./database/staging-permissions
+    - run: npm ci
+      working-directory: ./database/staging-permissions
       
-    # - run: sam build
-    #   working-directory: ./database/staging-permissions
+    - run: sam build
+      working-directory: ./database/staging-permissions
 
-    # - run: |
-    #     sam deploy --stack-name user-service-database-staging-access \
-    #     --no-confirm-changeset \
-    #     --no-fail-on-empty-changeset \
-    #     --parameter-overrides "StagingAccountId=${{ secrets.STAGING_ACCOUNT_ID }}" "dbRegion=us-east-1"
-    #   working-directory: ./database/staging-permissions
+    - run: |
+        sam deploy --stack-name user-service-database-staging-access \
+        --no-confirm-changeset \
+        --no-fail-on-empty-changeset \
+        --parameter-overrides "dbRegion=us-east-1" "StagingUserServiceLambdaExecutionRoleArn=${{ secrets.STAGING_USER_SERVICE_LAMBDA_EXECUTION_ROLE_ARN }}"
+      working-directory: ./database/staging-permissions
 

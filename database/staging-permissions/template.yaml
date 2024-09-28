@@ -6,9 +6,6 @@ Parameters:
     Type: String
   dbRegion:
     Type: String
-  StagingAccountId:
-    Type: String
-    Default: none
 
 Resources:
   StagingAccessPolicy:
