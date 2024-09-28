@@ -28,7 +28,7 @@ jobs:
         params="Stage=staging ${params}"
         params="QueueStageName=dev ${params}"
         params="messageQueueResourceName=MessageQueue ${params}"
-        params="dbTableName=User ${params}"
+        params="dbTableName=arn:aws:dynamodb:us-east-1:${{ secrets.PROD_ACCOUNT_ID }}:table/User ${params}"
         params="dbRegion=us-east-1 ${params}"
         params="dbEndpoint=https://dynamodb.us-east-1.amazonaws.com/ ${params}"
         params="MessageQueueStreamArn=${{ secrets.MESSAGE_QUEUE_ARN_STAGING }} ${params}"
@@ -40,7 +40,6 @@ jobs:
         params="FirebaseAppId=${{ secrets.FIREBASE_APP_ID_STAGING }} ${params}"
         params="FirebaseMeasurementId=${{ secrets.FIREBASE_MEASUREMENT_ID_STAGING }} ${params}"
         params="FirebaseAdminCreds=${{ secrets.FIREBASE_ADMIN_CREDS_STAGING }} ${params}"
-        params="ResourceAccountId=${{ secrets.PROD_ACCOUNT_ID }} ${params}"
         echo $params > parameters.cfg
 
     - uses: actions/setup-python@v3

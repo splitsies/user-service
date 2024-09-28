@@ -72,20 +72,6 @@ jobs:
     - run: |
         sam deploy --stack-name user-service-database \
         --no-confirm-changeset \
-        --no-fail-on-empty-changeset        
+        --no-fail-on-empty-changeset  \
+        --parameter-overrides "dbRegion=us-east-1" "StagingUserServiceLambdaExecutionRoleArn=${{ secrets.STAGING_USER_SERVICE_LAMBDA_EXECUTION_ROLE_ARN }}"       
       working-directory: ./database
-
-    - run: npm ci
-      working-directory: ./database/staging-permissions
-      
-    - run: sam build
-      working-directory: ./database/staging-permissions
-
-    - run: |
-        sam deploy --stack-name user-service-database-staging-access \
-        --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" \
-        --no-confirm-changeset \
-        --no-fail-on-empty-changeset \
-        --parameter-overrides "dbRegion=us-east-1" "StagingUserServiceLambdaExecutionRoleArn=${{ secrets.STAGING_USER_SERVICE_LAMBDA_EXECUTION_ROLE_ARN }}"
-      working-directory: ./database/staging-permissions
-
