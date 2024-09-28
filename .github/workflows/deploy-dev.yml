@@ -73,5 +73,5 @@ jobs:
         sam deploy --stack-name user-service-database \
         --no-confirm-changeset \
         --no-fail-on-empty-changeset \
-        --parameter-overrides "dbRegion=us-east-1" "StagingUserServiceLambdaExecutionRoleArn=${{ secrets.STAGING_USER_SERVICE_LAMBDA_EXECUTION_ROLE_ARN }}"
+        --parameter-overrides "dbRegion=us-east-1" "StagingLambdaExecutionRoleArn=${{ secrets.STAGING_USER_SERVICE_LAMBDA_EXECUTION_ROLE_ARN }}"
       working-directory: ./database
