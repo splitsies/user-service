@@ -2,10 +2,11 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Parameters:
-  StagingUserServiceLambdaExecutionRoleArn:
-    Type: String
   dbRegion:
     Type: String
+  StagingUserServiceLambdaExecutionRoleArn:
+    Type: String
+    Default: none
 
 Resources:
   StagingAccessPolicy:
@@ -16,8 +17,6 @@ Resources:
         Version: '2012-10-17'
         Statement:
           - Effect: Allow
-            Principal: 
-              AWS: !Sub ${StagingUserServiceLambdaExecutionRoleArn}
             Action:
               - dynamodb:GetItem
               - dynamodb:PutItem
@@ -25,3 +24,17 @@ Resources:
               - dynamodb:DeleteItem
             Resource: 
               - !Sub arn:aws:dynamodb:${dbRegion}:${AWS::AccountId}:table/User
+      Roles:
+        - !Ref StagingAccountRole
+
+  StagingAccountRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ExternalAccountAccessRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub ${StagingUserServiceLambdaExecutionRoleArn}
+            Action: sts:AssumeRole
