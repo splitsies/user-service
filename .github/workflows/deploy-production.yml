@@ -86,6 +86,6 @@ jobs:
         sam deploy --stack-name user-service-database-staging-access \
         --no-confirm-changeset \
         --no-fail-on-empty-changeset \
-        --parameter-overrides "StagingAccountId=${{ secrets.STAGING_ACCOUNT_ID }}"
+        --parameter-overrides "StagingAccountId=${{ secrets.STAGING_ACCOUNT_ID }}" "dbRegion=us-east-1"
       working-directory: ./database/staging-permissions
 
