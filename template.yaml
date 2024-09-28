@@ -39,8 +39,6 @@ Parameters:
   JoinRequestQueue:
     Type: String
     Default: 0B39C186-89FB-4158-9CF3-2FBFBCF2A6B9
-  ResourceAccountId:
-    Type: String
   ResourceRegion:
     Type: String
     Default: us-east-1
@@ -74,7 +72,7 @@ Globals:
         messageQueueResourceName: !Ref messageQueueResourceName
         MessageQueueStreamArn: !Ref MessageQueueStreamArn
         RtRegion: !Sub ${AWS::Region}
-        UserConnectedTopicArn: !Sub arn:aws:sns:${ResourceRegion}:${ResourceAccountId}:UserConnected
+        UserConnectedTopicArn: !Sub arn:aws:sns:${AWS::Region}:${AWS::AccountId}:UserConnected
         FIREBASE_USER_EMULATOR_HOST: http://docker.for.mac.localhost:9099/
 
 Resources:
@@ -110,15 +108,15 @@ Resources:
               # Allow Lambda to receive SNS messages
               - Effect: Allow
                 Action: sns:Publish
-                Resource: !Sub arn:aws:sns:${ResourceRegion}:${ResourceAccountId}:UserConnected
+                Resource: !Sub arn:aws:sns:${AWS::Region}:${AWS::AccountId}:UserConnected
 
               # Permission for Lambda to read from DynamoDB table
               - Effect: Allow
                 Action:
                   - dynamodb:*
                 Resource: 
-                  - !Sub arn:aws:dynamodb:${ResourceRegion}:${ResourceAccountId}:table/User
-                  - !Sub arn:aws:dynamodb:${ResourceRegion}:${ResourceAccountId}:table/${messageQueueResourceName}
+                  - !Sub arn:aws:dynamodb:${ResourceRegion}:${AWS::AccountId}:table/User
+                  - !Sub arn:aws:dynamodb:${ResourceRegion}:${AWS::AccountId}:table/${messageQueueResourceName}
                   - !Sub ${MessageQueueStreamArn}
 
   AuthenticateFunction:
