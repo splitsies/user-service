@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  StagingAccountId:
+    Type: String
+    Default: none
+
+Resources:
+  StagingAccessPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: AllowAccessToUserTable
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+            Resource: 
+              - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/User
+      Roles:
+        - !Ref StagingAccountRole
+
+  StagingAccountRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ExternalAccountAccessRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub arn:aws:iam::${StagingAccountId}:root
+            Action: sts:AssumeRole
