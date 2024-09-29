@@ -10,6 +10,8 @@ Parameters:
     Type: String
   StagingLambdaExecutionRoleArn:
     Type: String
+  StagingAccountId
+    Type: String
 
 Resources:
   UserTable:
@@ -30,7 +32,7 @@ Resources:
           Statement:
             - Effect: Allow
               Principal:
-                AWS: !Sub ${StagingLambdaExecutionRoleArn}/*
+                AWS: 149536454463
               Action:
                 - dynamodb:GetItem
                 - dynamodb:PutItem
