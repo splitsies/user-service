@@ -30,7 +30,14 @@ Resources:
           Statement:
             - Effect: Allow
               Principal:
-                AWS: 149536454463
+                AWS: 
+                  - !Sub ${StagingLambdaExecutionRoleArn}/user-service-AuthenticateFunction-I9X4qVReaOAe
+                  - !Sub ${StagingLambdaExecutionRoleArn}/user-service-CreateGuestUserFunction-sYgdTRhvwpsO
+                  - !Sub ${StagingLambdaExecutionRoleArn}/user-service-CreateUserFunction-VdEYqB8Hpk9u
+                  - !Sub ${StagingLambdaExecutionRoleArn}/user-service-DeleteUserFunction-QaxWuEzysBYK
+                  - !Sub ${StagingLambdaExecutionRoleArn}/user-service-FindUsersFunction-EvosYnUiKFfD
+                  - !Sub ${StagingLambdaExecutionRoleArn}/user-service-GetUserByIdFunction-E29XCpRL00uN
+                  - !Sub ${StagingLambdaExecutionRoleArn}/user-service-PopulateJoinRequestFunction-8pdAy0faY0oy
               Action:
                 - dynamodb:GetItem
                 - dynamodb:PutItem
