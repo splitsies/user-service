@@ -30,7 +30,7 @@ Resources:
           Statement:
             - Effect: Allow
               Principal:
-                AWS: !Sub ${StagingLambdaExecutionRoleArn}
+                AWS: !Sub ${StagingLambdaExecutionRoleArn}/*
               Action:
                 - dynamodb:GetItem
                 - dynamodb:PutItem
