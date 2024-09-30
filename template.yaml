@@ -44,6 +44,12 @@ Parameters:
   ResourceRegion:
     Type: String
     Default: us-east-1
+  DbAccessKeyId:
+    Type: String
+    Default: ""
+  DbSecretAccessKey:
+    Type: String
+    Default: ""
 
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
@@ -70,6 +76,8 @@ Globals:
         dbRegion: !Ref dbRegion
         dbEndpoint: !Ref dbEndpoint
         dbTableName: !Ref dbTableName
+        DbAccessKeyId: !Ref DbAccessKeyId
+        DbSecretAccessKey: !Ref DbSecretAccessKey
         FireBaseAuthTokenTtlMs: 3600000
         messageQueueResourceName: !Ref messageQueueResourceName
         MessageQueueStreamArn: !Ref MessageQueueStreamArn
