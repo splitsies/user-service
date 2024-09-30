@@ -305,7 +305,7 @@ Resources:
             Enabled: true
             FilterCriteria:
               Filters:
-                - Pattern: !Sub "{\"eventName\":[\"INSERT\"],\"dynamodb\":{\"Keys\":{\"queueName\":{\"S\":[\"${JoinRequestQueue}\"]}},\"NewImage\":{\"stage\":{\"S\":[\"${Stage}\"]}}}}"
+                - Pattern: !Sub "{\"eventName\":[\"INSERT\"],\"dynamodb\":{\"Keys\":{\"queueName\":{\"S\":[\"${JoinRequestQueue}\"]}}}}"
     Metadata: # Manage esbuild properties
       BuildMethod: esbuild
       BuildProperties:
