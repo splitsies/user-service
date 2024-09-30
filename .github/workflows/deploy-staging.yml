@@ -30,6 +30,7 @@ jobs:
         params="dbTableName=arn:aws:dynamodb:us-east-1:${{ secrets.DEV_ACCOUNT_ID }}:table/User ${params}"
         params="dbRegion=us-east-1 ${params}"
         params="dbEndpoint=https://dynamodb.us-east-1.amazonaws.com/ ${params}"
+        params="ResourceAccountId=${{ secrets.DEV_ACCOUNT_ID }} ${params}"
         params="MessageQueueStreamArn=${{ secrets.MESSAGE_QUEUE_ARN_STAGING }} ${params}"
         params="FirebaseApiKey=${{ secrets.FIREBASE_API_KEY_DEV_PR }} ${params}"
         params="FirebaseAuthDomain=${{ secrets.FIREBASE_AUTH_DOMAIN_DEV_PR }} ${params}"
