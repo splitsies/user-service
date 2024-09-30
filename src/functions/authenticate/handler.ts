@@ -29,9 +29,6 @@ const client = new DynamoDBClient({
  * reducing package references for maximum performance
  */
 export const main = async (event) => {
-    const { username, password } = JSON.parse(event.body);
-
-    const userCred = await signInWithEmailAndPassword(authProvider.provide(), username, password);
     if (process.env.Stage !== "local") {
         await snsClient.send(
             new PublishCommand({
@@ -40,6 +37,9 @@ export const main = async (event) => {
             }),
         );
     }
+
+    const { username, password } = JSON.parse(event.body);
+    const userCred = await signInWithEmailAndPassword(authProvider.provide(), username, password);
 
     const expiresAt = Date.now() + firebaseConfiguration.authTokenTtlMs;
     const user = await client.send(
