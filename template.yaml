@@ -80,13 +80,11 @@ Globals:
         dbTableName: !Ref dbTableName
         DbAccessKeyId: !Ref DbAccessKeyId
         DbSecretAccessKey: !Ref DbSecretAccessKey
-        FireBaseAuthTokenTtlMs: 3600000
         messageQueueResourceName: !Ref messageQueueResourceName
         MessageQueueStreamArn: !Ref MessageQueueStreamArn
         RtRegion: !Sub ${AWS::Region}
-        UserConnectedTopicArn: !Sub arn:aws:sns:${AWS::Region}:${AWS::AccountId}:UserConnected
+        AwsAccountId: !Sub ${AWS::AccountId}
         ResourceAccountId: !Ref ResourceAccountId
-        FIREBASE_USER_EMULATOR_HOST: http://docker.for.mac.localhost:9099/
 
 Resources:
   UserServiceApi:

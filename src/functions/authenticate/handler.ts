@@ -32,7 +32,7 @@ export const main = async (event) => {
     if (process.env.Stage !== "local") {
         await snsClient.send(
             new PublishCommand({
-                TopicArn: process.env.UserConnectedTopicArn,
+                TopicArn: `arn:aws:sns:${process.env.RtRegion}:${process.env.AwsAccountId}:UserConnected`,
                 Message: JSON.stringify({ data: process.env.RtRegion ?? "us-east-1" }),
             }),
         );
