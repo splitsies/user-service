@@ -29,6 +29,7 @@ const client = new DynamoDBClient({
  * reducing package references for maximum performance
  */
 export const main = async (event) => {
+    console.log(firebaseConfiguration);
     if (process.env.Stage !== "local") {
         await snsClient.send(
             new PublishCommand({
