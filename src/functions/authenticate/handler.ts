@@ -21,6 +21,10 @@ const authProvider = new AuthProvider(firebaseConfiguration);
 const snsClient = new SNSClient({ region: process.env.dbRegion });
 
 const client = new DynamoDBClient({
+    credentials: {
+        accessKeyId: process.env.DbAccessKeyId,
+        secretAccessKey: process.env.DbSecretAccessKey,        
+    },
     region: process.env.dbRegion,
     endpoint: process.env.dbEndpoint,
 });
@@ -29,7 +33,6 @@ const client = new DynamoDBClient({
  * reducing package references for maximum performance
  */
 export const main = async (event) => {
-    console.log(firebaseConfiguration);
     if (process.env.Stage !== "local") {
         await snsClient.send(
             new PublishCommand({
