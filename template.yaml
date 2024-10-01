@@ -78,7 +78,6 @@ Globals:
         dbRegion: !Ref dbRegion
         dbEndpoint: !Ref dbEndpoint
         dbTableName: User
-        DB_TABLE_NAME: User
         DbAccessKeyId: !Ref DbAccessKeyId
         DbSecretAccessKey: !Ref DbSecretAccessKey
         messageQueueResourceName: !Ref messageQueueResourceName
