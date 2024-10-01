@@ -46,6 +46,7 @@ export const main = async (event) => {
     const userCred = await signInWithEmailAndPassword(authProvider.provide(), username, password);
 
     const expiresAt = Date.now() + firebaseConfiguration.authTokenTtlMs;
+    console.log({ tableName: process.env.dbTableName, dbAccessId: process.env.dbAccessKeyId, dbSecret: process.env.dbSecretAccessKey });
     const user = await client.send(
         new GetItemCommand({
             TableName: process.env.dbTableName,
