@@ -23,7 +23,7 @@ const snsClient = new SNSClient({ region: process.env.dbRegion });
 const client = new DynamoDBClient({
     credentials: {
         accessKeyId: process.env.DbAccessKeyId,
-        secretAccessKey: process.env.DbSecretAccessKey,        
+        secretAccessKey: process.env.DbSecretAccessKey,
     },
     region: process.env.dbRegion,
     endpoint: process.env.dbEndpoint,
@@ -46,7 +46,6 @@ export const main = async (event) => {
     const userCred = await signInWithEmailAndPassword(authProvider.provide(), username, password);
 
     const expiresAt = Date.now() + firebaseConfiguration.authTokenTtlMs;
-    console.log({ tableName: process.env.dbTableName, dbAccessId: process.env.DbAccessKeyId, dbSecret: process.env.DbSecretAccessKey });
     const user = await client.send(
         new GetItemCommand({
             TableName: process.env.dbTableName,
