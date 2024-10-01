@@ -77,7 +77,8 @@ Globals:
         Stage: !Ref Stage
         dbRegion: !Ref dbRegion
         dbEndpoint: !Ref dbEndpoint
-        dbTableName: !Ref dbTableName
+        dbTableName: User
+        DB_TABLE_NAME: User
         DbAccessKeyId: !Ref DbAccessKeyId
         DbSecretAccessKey: !Ref DbSecretAccessKey
         messageQueueResourceName: !Ref messageQueueResourceName
