@@ -26,11 +26,13 @@ Parameters:
     Type: String
   dbRegion:
     Type: String
+    Default: us-east-1
   dbEndpoint:
     Type: String
     Default: https://dynamodb.us-east-1.amazonaws.com/
   dbTableName:
     Type: String
+    Default: User
   MessageQueueStreamArn:
     Type: String
   messageQueueResourceName:
