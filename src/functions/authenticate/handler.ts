@@ -13,7 +13,7 @@ const firebaseConfiguration = {
     appId: process.env.FIREBASE_APP_ID || process.env.FirebaseAppId,
     measurementId: process.env.FIREBASE_MEASUREMENT_ID || process.env.FirebaseMeasurementId,
     emulatorHost: process.env.FIREBASE_AUTH_EMULATOR_HOST || process.env.FirebaseAuthEmulatorHost,
-    authTokenTtlMs: parseInt(process.env.FireBaseAuthTokenTtlMs),
+    authTokenTtlMs: 3600000,
     devMode: process.env.Stage === "local",
 };
 
