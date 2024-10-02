@@ -49,10 +49,10 @@ export class UserManager implements IUserManager {
             const userAuth = await this._authInteractor.create(userWithFormattedNumber);
             userId = userAuth.userId;
             const user = await this._userDao.create(
-                this._userMapper.toDomain({ ...userWithFormattedNumber, id: userAuth.userId }),
+                this._userMapper.toDomainModel({ ...userWithFormattedNumber, id: userAuth.userId }),
             );
 
-            return new UserCredential(this._userMapper.toDa(user), userAuth.authToken, userAuth.expiresAt);
+            return new UserCredential(this._userMapper.toDtoModel(user), userAuth.authToken, userAuth.expiresAt);
         } catch (e) {
             this._logger.error(e);
             if (userId) {
@@ -72,7 +72,7 @@ export class UserManager implements IUserManager {
     async authenticateUser(username: string, password: string): Promise<IUserCredential> {
         const userAuth = await this._authInteractor.authenticate(username, password);
         const user = await this.getUser(userAuth.userId);
-        return new UserCredential(this._userMapper.toDa(user), userAuth.authToken, userAuth.expiresAt);
+        return new UserCredential(this._userMapper.toDtoModel(user), userAuth.authToken, userAuth.expiresAt);
     }
 
     async addGuestUser(givenName: string, familyName: string, phoneNumber: string): Promise<IUser> {

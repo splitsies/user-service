@@ -13,5 +13,3 @@ jspm_packages
 
 **/*debug.log
 utils/local-firebase
-local-startup/
-.aws-sam

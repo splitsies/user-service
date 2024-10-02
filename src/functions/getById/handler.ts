@@ -18,7 +18,7 @@ export const main = middyfy(
         const result = await userService.getUser(event.pathParameters.id);
 
         return !!result
-            ? new DataResponse(HttpStatusCode.OK, mapper.toDa(result)).toJson()
+            ? new DataResponse(HttpStatusCode.OK, mapper.toDtoModel(result)).toJson()
             : new DataResponse(HttpStatusCode.NOT_FOUND, undefined).toJson();
     }),
 );

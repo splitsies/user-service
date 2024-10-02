@@ -3,10 +3,8 @@ import { Container } from "inversify";
 
 import {
     ApiKeyConfiguration,
-    DynamoDbTransactionStrategy,
     FirebaseProvider,
     IApiKeyConfiguration,
-    IDynamoDbTransactionStrategy,
     IFirebaseConfiguration,
     IFirebaseProvider,
     ILogger,
@@ -49,6 +47,5 @@ container.bind<IApiKeyConfiguration>(IApiKeyConfiguration).to(ApiKeyConfiguratio
 container.bind<IExpenseUserDetailsMapper>(IExpenseUserDetailsMapper).to(ExpenseUserDetailsMapper);
 container.bind<ICreateUserValidator>(ICreateUserValidator).to(CreateUserValidator);
 container.bind<IMessageQueueClient>(IMessageQueueClient).to(MessageQueueClient);
-container.bind<IDynamoDbTransactionStrategy>(IDynamoDbTransactionStrategy).to(DynamoDbTransactionStrategy);
 
 export { container };
