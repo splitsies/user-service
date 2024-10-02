@@ -26,11 +26,13 @@ Parameters:
     Type: String
   dbRegion:
     Type: String
+    Default: us-east-1
   dbEndpoint:
     Type: String
     Default: https://dynamodb.us-east-1.amazonaws.com/
   dbTableName:
     Type: String
+    Default: User
   MessageQueueStreamArn:
     Type: String
   messageQueueResourceName:
@@ -44,6 +46,12 @@ Parameters:
   ResourceRegion:
     Type: String
     Default: us-east-1
+  DbAccessKeyId:
+    Type: String
+    Default: ""
+  DbSecretAccessKey:
+    Type: String
+    Default: ""
 
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
@@ -69,13 +77,14 @@ Globals:
         Stage: !Ref Stage
         dbRegion: !Ref dbRegion
         dbEndpoint: !Ref dbEndpoint
-        dbTableName: !Ref dbTableName
-        FireBaseAuthTokenTtlMs: 3600000
+        dbTableName: User
+        DbAccessKeyId: !Ref DbAccessKeyId
+        DbSecretAccessKey: !Ref DbSecretAccessKey
         messageQueueResourceName: !Ref messageQueueResourceName
         MessageQueueStreamArn: !Ref MessageQueueStreamArn
         RtRegion: !Sub ${AWS::Region}
-        UserConnectedTopicArn: !Sub arn:aws:sns:${ResourceRegion}:${ResourceAccountId}:UserConnected
-        FIREBASE_USER_EMULATOR_HOST: http://docker.for.mac.localhost:9099/
+        AwsAccountId: !Sub ${AWS::AccountId}
+        ResourceAccountId: !Ref ResourceAccountId
 
 Resources:
   UserServiceApi:
@@ -110,7 +119,7 @@ Resources:
               # Allow Lambda to receive SNS messages
               - Effect: Allow
                 Action: sns:Publish
-                Resource: !Sub arn:aws:sns:${ResourceRegion}:${ResourceAccountId}:UserConnected
+                Resource: !Sub arn:aws:sns:${AWS::Region}:${AWS::AccountId}:UserConnected
 
               # Permission for Lambda to read from DynamoDB table
               - Effect: Allow
@@ -304,7 +313,7 @@ Resources:
             Enabled: true
             FilterCriteria:
               Filters:
-                - Pattern: !Sub "{\"eventName\":[\"INSERT\"],\"dynamodb\":{\"Keys\":{\"queueName\":{\"S\":[\"${JoinRequestQueue}\"]}},\"NewImage\":{\"stage\":{\"S\":[\"${Stage}\"]}}}}"
+                - Pattern: !Sub "{\"eventName\":[\"INSERT\"],\"dynamodb\":{\"Keys\":{\"queueName\":{\"S\":[\"${JoinRequestQueue}\"]}}}}"
     Metadata: # Manage esbuild properties
       BuildMethod: esbuild
       BuildProperties:

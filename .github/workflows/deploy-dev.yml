@@ -23,13 +23,10 @@ jobs:
 
     - name: Create Common Parameter Overrides
       run: | 
-        params=
+        params=""
         params="Stage=dev ${params}"
-        params="QueueStageName=dev ${params}"
-        params="messageQueueResourceName=MessageQueue ${params}"
-        params="dbTableName=User ${params}"
         params="dbRegion=us-east-1 ${params}"
-        params="dbEndpoint=https://dynamodb.us-east-1.amazonaws.com/ ${params}"
+        params="ResourceAccountId=${{ secrets.DEV_ACCOUNT_ID }} ${params}"
         params="MessageQueueStreamArn=${{ secrets.MESSAGE_QUEUE_ARN_DEV_PR }} ${params}"
         params="FirebaseApiKey=${{ secrets.FIREBASE_API_KEY_DEV_PR }} ${params}"
         params="FirebaseAuthDomain=${{ secrets.FIREBASE_AUTH_DOMAIN_DEV_PR }} ${params}"
@@ -72,5 +69,6 @@ jobs:
     - run: |
         sam deploy --stack-name user-service-database \
         --no-confirm-changeset \
-        --no-fail-on-empty-changeset        
+        --no-fail-on-empty-changeset \
+        --parameter-overrides "dbRegion=us-east-1" "StagingLambdaExecutionRoleArn=${{ secrets.STAGING_USER_SERVICE_LAMBDA_EXECUTION_ROLE_ARN }}"
       working-directory: ./database

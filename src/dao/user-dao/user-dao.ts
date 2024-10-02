@@ -19,6 +19,7 @@ export class UserDao extends DaoBase<IUserDto, Key, IUser> implements IUserDao {
         @inject(IUserMapper) mapper: IUserMapper,
     ) {
         const keySelector = (user: IUserDto) => ({ id: user.id });
+        console.log(dbConfiguration);
         super(logger, dbConfiguration, dbConfiguration.tableName, keySelector, mapper);
     }
 

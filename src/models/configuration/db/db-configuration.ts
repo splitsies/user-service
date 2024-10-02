@@ -4,6 +4,8 @@ import { injectable } from "inversify";
 
 @injectable()
 export class DbConfiguration implements IDbConfiguration {
+    readonly dbAccessKeyId: string;
+    readonly dbSecretAccessKey: string;
     readonly dbRegion: string;
     readonly tableName: string;
     readonly endpoint: string;
@@ -16,5 +18,7 @@ export class DbConfiguration implements IDbConfiguration {
         this.dbRegion = process.env.dbRegion;
         this.tableName = process.env.dbTableName;
         this.endpoint = process.env.dbEndpoint;
+        this.dbAccessKeyId = process.env.DbAccessKeyId;
+        this.dbSecretAccessKey = process.env.DbSecretAccessKey;
     }
 }
