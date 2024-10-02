@@ -19,12 +19,16 @@ const firebaseConfiguration = {
 
 const authProvider = new AuthProvider(firebaseConfiguration);
 const snsClient = new SNSClient({ region: process.env.dbRegion });
+const credentials =
+    !process.env.DbAccessKeyId || !process.env.DbSecretAccessKey
+        ? undefined
+        : {
+              accessKeyId: process.env.DbAccessKeyId,
+              secretAccessKey: process.env.DbSecretAccessKey,
+          };
 
 const client = new DynamoDBClient({
-    credentials: {
-        accessKeyId: process.env.DbAccessKeyId,
-        secretAccessKey: process.env.DbSecretAccessKey,
-    },
+    credentials,
     region: process.env.dbRegion,
     endpoint: process.env.dbEndpoint,
 });
