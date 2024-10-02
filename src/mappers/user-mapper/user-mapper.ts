@@ -7,29 +7,29 @@ import { User } from "src/models/user/user";
 
 @injectable()
 export class UserMapper implements IUserMapper {
-    toDa(domain: IUser): IUserDto {
+    toDtoModel(domainModel: IUser): IUserDto {
         return new UserDto(
-            domain.id,
-            domain.username,
-            domain.givenName,
-            domain.familyName,
-            domain.email,
-            domain.phoneNumber,
-            domain.dateOfBirth?.toISOString(),
-            domain.middleName,
+            domainModel.id,
+            domainModel.username,
+            domainModel.givenName,
+            domainModel.familyName,
+            domainModel.email,
+            domainModel.phoneNumber,
+            domainModel.dateOfBirth?.toISOString(),
+            domainModel.middleName,
         );
     }
 
-    toDomain(da: IUserDto): IUser {
+    toDomainModel(dtoModel: IUserDto): IUser {
         return new User(
-            da.id,
-            da.username,
-            da.givenName,
-            da.familyName,
-            da.email,
-            da.phoneNumber,
-            da.dateOfBirth ? new Date(Date.parse(da.dateOfBirth)) : null,
-            da.middleName,
+            dtoModel.id,
+            dtoModel.username,
+            dtoModel.givenName,
+            dtoModel.familyName,
+            dtoModel.email,
+            dtoModel.phoneNumber,
+            dtoModel.dateOfBirth ? new Date(Date.parse(dtoModel.dateOfBirth)) : null,
+            dtoModel.middleName,
         );
     }
 }

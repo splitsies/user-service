@@ -14,7 +14,7 @@ export class FirebaseConfiguration
 
     constructor() {
         super();
-        this.devMode = process.env.Stage === "local";
-        this.authTokenTtlMs = 3600000;
+        this.devMode = process.env.FIREBASE_DEV_MODE === "true";
+        this.authTokenTtlMs = parseInt(process.env.FIREBASE_AUTH_TOKEN_TTL_MS);
     }
 }
