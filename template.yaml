@@ -30,9 +30,6 @@ Parameters:
   dbEndpoint:
     Type: String
     Default: https://dynamodb.us-east-1.amazonaws.com/
-  dbTableName:
-    Type: String
-    Default: User
   MessageQueueStreamArn:
     Type: String
   messageQueueResourceName:
@@ -96,6 +93,7 @@ Resources:
   LambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: UserServiceLambdaExecutionRole
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
