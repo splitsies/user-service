@@ -27,7 +27,6 @@ jobs:
         params="Stage=dev ${params}"
         params="dbRegion=us-east-1 ${params}"
         params="ResourceAccountId=${{ secrets.DEV_ACCOUNT_ID }} ${params}"
-        params="MessageQueueStreamArn=${{ secrets.MESSAGE_QUEUE_ARN_DEV_PR }} ${params}"
         params="FirebaseApiKey=${{ secrets.FIREBASE_API_KEY_DEV_PR }} ${params}"
         params="FirebaseAuthDomain=${{ secrets.FIREBASE_AUTH_DOMAIN_DEV_PR }} ${params}"
         params="FirebaseProjectId=${{ secrets.FIREBASE_PROJECT_ID_DEV_PR }} ${params}"
@@ -58,7 +57,16 @@ jobs:
         --region us-east-1 \
         --no-confirm-changeset \
         --no-fail-on-empty-changeset \
-        --parameter-overrides $PARAMETERS
+        --parameter-overrides $PARAMETERS "MessageQueueStreamArn=${{ secrets.MESSAGE_QUEUE_ARN_DEV_PR }}"
+
+    - name: Deploy to us-west-1 (SAM Deploy)
+      run: |
+        PARAMETERS=$(cat parameters.cfg)
+        sam deploy --stack-name user-service \
+        --region us-west-1 \
+        --no-confirm-changeset \
+        --no-fail-on-empty-changeset \
+        --parameter-overrides $PARAMETERS "MessageQueueStreamArn=${{ secrets.MESSAGE_QUEUE_ARN_US_WEST_1_DEV }}"
 
     - run: npm ci
       working-directory: ./database
