@@ -92,7 +92,6 @@ Globals:
         DbAccessKeyId: !Ref DbAccessKeyId
         DbSecretAccessKey: !Ref DbSecretAccessKey
         messageQueueResourceName: !Ref messageQueueResourceName
-        MessageQueueStreamArn: !Ref MessageQueueStreamArn
         RtRegion: !Sub ${AWS::Region}
         AwsAccountId: !Sub ${AWS::AccountId}
         ResourceAccountId: !Ref ResourceAccountId
