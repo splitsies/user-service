@@ -18,7 +18,7 @@ const firebaseConfiguration = {
 };
 
 const authProvider = new AuthProvider(firebaseConfiguration);
-const snsClient = new SNSClient({ region: process.env.dbRegion });
+const snsClient = new SNSClient({ region: process.env.RtRegion });
 const credentials =
     !process.env.DbAccessKeyId || !process.env.DbSecretAccessKey
         ? undefined
