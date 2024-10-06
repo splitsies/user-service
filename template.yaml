@@ -49,6 +49,20 @@ Parameters:
   DbSecretAccessKey:
     Type: String
     Default: ""
+  OrganizationId:
+    Type: String
+
+Conditions:
+  IsNotStaging:
+    !Not [!Equals [!Ref Stage, staging]]
+  IsUSEast1:
+    Fn::Equals:
+      - !Ref AWS::Region
+      - "us-east-1"
+  IsUSEast1AndNotStaging:
+    Fn::And:
+      - Condition: IsUSEast1
+      - Condition: IsNotStaging
 
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
@@ -92,8 +106,9 @@ Resources:
   # IAM Role for Lambda to allow invocation by SNS
   LambdaExecutionRole:
     Type: AWS::IAM::Role
+    Condition: IsUSEast1
     Properties:
-      RoleName: !Sub ${AWS::StackName}-LambdaExecutionRole-${AWS::Region}
+      RoleName: !Sub ${AWS::StackName}-LambdaExecutionRole
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -117,7 +132,7 @@ Resources:
               # Allow Lambda to receive SNS messages
               - Effect: Allow
                 Action: sns:Publish
-                Resource: !Sub arn:aws:sns:${AWS::Region}:${AWS::AccountId}:UserConnected
+                Resource: !Sub arn:aws:sns:*:${AWS::AccountId}:UserConnected
 
               # Permission for Lambda to read from DynamoDB table
               - Effect: Allow
@@ -128,6 +143,7 @@ Resources:
                   - !Sub arn:aws:dynamodb:${ResourceRegion}:${ResourceAccountId}:table/${messageQueueResourceName}
                   - !Sub ${MessageQueueStreamArn}
 
+  # Functions
   AuthenticateFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -136,7 +152,7 @@ Resources:
       Runtime: nodejs18.x
       Architectures:
       - x86_64
-      Role: !GetAtt LambdaExecutionRole.Arn
+      Role: !Sub arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-LambdaExecutionRole
       Events:
         Notify:
           Type: Api
@@ -164,7 +180,7 @@ Resources:
       Runtime: nodejs18.x
       Architectures:
       - x86_64
-      Role: !GetAtt LambdaExecutionRole.Arn
+      Role: !Sub arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-LambdaExecutionRole
       Events:
         Notify:
           Type: Api
@@ -191,7 +207,7 @@ Resources:
       Runtime: nodejs18.x
       Architectures:
       - x86_64
-      Role: !GetAtt LambdaExecutionRole.Arn
+      Role: !Sub arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-LambdaExecutionRole
       Events:
         Notify:
           Type: Api
@@ -218,7 +234,7 @@ Resources:
       Runtime: nodejs18.x
       Architectures:
       - x86_64
-      Role: !GetAtt LambdaExecutionRole.Arn
+      Role: !Sub arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-LambdaExecutionRole
       Events:
         Notify:
           Type: Api
@@ -245,7 +261,7 @@ Resources:
       Runtime: nodejs18.x
       Architectures:
       - x86_64
-      Role: !GetAtt LambdaExecutionRole.Arn
+      Role: !Sub arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-LambdaExecutionRole
       Events:
         Notify:
           Type: Api
@@ -272,7 +288,7 @@ Resources:
       Runtime: nodejs18.x
       Architectures:
       - x86_64
-      Role: !GetAtt LambdaExecutionRole.Arn
+      Role: !Sub arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-LambdaExecutionRole
       Events:
         Notify:
           Type: Api
@@ -299,7 +315,7 @@ Resources:
       Runtime: nodejs18.x
       Architectures:
       - x86_64
-      Role: !GetAtt LambdaExecutionRole.Arn
+      Role: !Sub arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-LambdaExecutionRole
       Events:
         Notify:
           Type: DynamoDB
@@ -323,5 +339,39 @@ Resources:
         External:
         - node_modules
         - aws-sdk
+
+
+  # Tables
+  UserTable:
+    Type: AWS::DynamoDB::Table
+    Condition: IsUSEast1AndNotStaging
+    Properties:
+      TableName: User
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      TableClass: STANDARD
+      ResourcePolicy:
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal: "*"
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+                - dynamodb:DeleteItem
+                - dynamodb:Query
+                - dynamodb:Scan
+              Resource: 
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/User
+              Condition:
+                StringEquals:
+                  aws:PrincipalOrgID: !Sub ${OrganizationId}
         
 

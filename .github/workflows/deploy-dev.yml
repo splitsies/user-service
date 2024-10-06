@@ -36,6 +36,7 @@ jobs:
         params="FirebaseMeasurementId=${{ secrets.FIREBASE_MEASUREMENT_ID_DEV_PR }} ${params}"
         params="FirebaseAdminCreds=${{ secrets.FIREBASE_ADMIN_CREDS_DEV_PR }} ${params}"
         params="ResourceAccountId=${{ secrets.DEV_ACCOUNT_ID }} ${params}"
+        params="OrganizationId=${{ secrets.AWS_ORGANIZATION_ID }} ${params}"
         echo $params > parameters.cfg
 
     - uses: actions/setup-python@v3
@@ -70,15 +71,15 @@ jobs:
         --no-fail-on-empty-changeset \
         --parameter-overrides $PARAMETERS "MessageQueueStreamArn=${{ secrets.MESSAGE_QUEUE_ARN_US_WEST_1_DEV }}"
 
-    - run: npm ci
-      working-directory: ./database
+    # - run: npm ci
+    #   working-directory: ./database
       
-    - run: sam build
-      working-directory: ./database
+    # - run: sam build
+    #   working-directory: ./database
 
-    - run: |
-        sam deploy --stack-name user-service-database \
-        --no-confirm-changeset \
-        --no-fail-on-empty-changeset \
-        --parameter-overrides "dbRegion=us-east-1" "StagingLambdaExecutionRoleArn=${{ secrets.STAGING_USER_SERVICE_LAMBDA_EXECUTION_ROLE_ARN }}"
-      working-directory: ./database
+    # - run: |
+    #     sam deploy --stack-name user-service-database \
+    #     --no-confirm-changeset \
+    #     --no-fail-on-empty-changeset \
+    #     --parameter-overrides "dbRegion=us-east-1" "StagingLambdaExecutionRoleArn=${{ secrets.STAGING_USER_SERVICE_LAMBDA_EXECUTION_ROLE_ARN }}"
+    #   working-directory: ./database
