@@ -26,7 +26,6 @@ jobs:
         params=""
         params="Stage=dev ${params}"
         params="dbRegion=us-east-1 ${params}"
-        params="ResourceAccountId=${{ secrets.DEV_ACCOUNT_ID }} ${params}"
         params="FirebaseApiKey=${{ secrets.FIREBASE_API_KEY_DEV_PR }} ${params}"
         params="FirebaseAuthDomain=${{ secrets.FIREBASE_AUTH_DOMAIN_DEV_PR }} ${params}"
         params="FirebaseProjectId=${{ secrets.FIREBASE_PROJECT_ID_DEV_PR }} ${params}"
@@ -70,16 +69,3 @@ jobs:
         --no-confirm-changeset \
         --no-fail-on-empty-changeset \
         --parameter-overrides $PARAMETERS "MessageQueueStreamArn=${{ secrets.MESSAGE_QUEUE_ARN_US_WEST_1_DEV }}"
-
-    # - run: npm ci
-    #   working-directory: ./database
-      
-    # - run: sam build
-    #   working-directory: ./database
-
-    # - run: |
-    #     sam deploy --stack-name user-service-database \
-    #     --no-confirm-changeset \
-    #     --no-fail-on-empty-changeset \
-    #     --parameter-overrides "dbRegion=us-east-1" "StagingLambdaExecutionRoleArn=${{ secrets.STAGING_USER_SERVICE_LAMBDA_EXECUTION_ROLE_ARN }}"
-    #   working-directory: ./database

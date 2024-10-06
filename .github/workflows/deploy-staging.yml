@@ -1,14 +1,19 @@
 name: Deploy Staging
 
+# on:
+#   release:
+#     types: [prereleased]
 on:
-  release:
-    types: [prereleased]
+    pull_request:
+      branches:
+        - main
+        - releases/**
 
 jobs:
   deploy:
     name: deploy
     runs-on: ubuntu-latest
-    environment: production
+    # environment: production
     strategy:
       matrix:
         node-version: [18.x]
@@ -24,8 +29,7 @@ jobs:
       run: | 
         params=""
         params="Stage=staging ${params}"
-        params="ResourceAccountId=${{ secrets.PROD_ACCOUNT_ID }} ${params}"
-        params="MessageQueueStreamArn=${{ secrets.MESSAGE_QUEUE_ARN_STAGING }} ${params}"
+        params="dbRegion=us-east-1 ${params}"
         params="FirebaseApiKey=${{ secrets.FIREBASE_API_KEY_PRODUCTION }} ${params}"
         params="FirebaseAuthDomain=${{ secrets.FIREBASE_AUTH_DOMAIN_PRODUCTION }} ${params}"
         params="FirebaseProjectId=${{ secrets.FIREBASE_PROJECT_ID_PRODUCTION }} ${params}"
@@ -34,6 +38,8 @@ jobs:
         params="FirebaseAppId=${{ secrets.FIREBASE_APP_ID_PRODUCTION }} ${params}"
         params="FirebaseMeasurementId=${{ secrets.FIREBASE_MEASUREMENT_ID_PRODUCTION }} ${params}"
         params="FirebaseAdminCreds=${{ secrets.FIREBASE_ADMIN_CREDS_PRODUCTION }} ${params}"
+        params="ResourceAccountId=${{ secrets.PROD_ACCOUNT_ID }} ${params}"
+        params="OrganizationId=${{ secrets.AWS_ORGANIZATION_ID }} ${params}"
         params="DbAccessKeyId=${{ secrets.DB_ACCESS_KEY_ID_PROD }} ${params}"
         params="DbSecretAccessKey=${{ secrets.DB_SECRET_ACCESS_KEY_PROD }} ${params}"
         echo $params > parameters.cfg
@@ -54,7 +60,18 @@ jobs:
       run: |
         PARAMETERS=$(cat parameters.cfg)
         sam deploy --stack-name user-service \
+        --capabilities CAPABILITY_NAMED_IAM CAPABILITY_IAM \
         --region us-east-1 \
         --no-confirm-changeset \
         --no-fail-on-empty-changeset \
-        --parameter-overrides $PARAMETERS
+        --parameter-overrides $PARAMETERS "MessageQueueStreamArn=${{ secrets.MESSAGE_QUEUE_ARN_STAGING }}"
+
+    - name: Deploy to us-west-1 (SAM Deploy)
+      run: |
+        PARAMETERS=$(cat parameters.cfg)
+        sam deploy --stack-name user-service \
+        --capabilities CAPABILITY_NAMED_IAM CAPABILITY_IAM \
+        --region us-west-1 \
+        --no-confirm-changeset \
+        --no-fail-on-empty-changeset \
+        --parameter-overrides $PARAMETERS "MessageQueueStreamArn=${{ secrets.MESSAGE_QUEUE_ARN_STAGING_US_WEST_1 }}"
