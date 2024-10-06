@@ -109,7 +109,7 @@ Resources:
     Type: AWS::IAM::Role
     Condition: IsUSEast1
     Properties:
-      RoleName: !Sub ${AWS::StackName}-LambdaExecutionRole
+      RoleName: !Sub ${AWS::StackName}-LambdaExecutionRole-${AWS::Region}
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -155,7 +155,7 @@ Resources:
       Runtime: nodejs18.x
       Architectures:
       - x86_64
-      # Role: !Sub arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-LambdaExecutionRole
+      Role: !GetAtt LambdaExecutionRole.Arn
       Events:
         Notify:
           Type: Api
@@ -183,7 +183,7 @@ Resources:
       Runtime: nodejs18.x
       Architectures:
       - x86_64
-      # Role: !Sub arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-LambdaExecutionRole
+      Role: !GetAtt LambdaExecutionRole.Arn
       Events:
         Notify:
           Type: Api
@@ -210,7 +210,7 @@ Resources:
       Runtime: nodejs18.x
       Architectures:
       - x86_64
-      # Role: !Sub arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-LambdaExecutionRole
+      Role: !GetAtt LambdaExecutionRole.Arn
       Events:
         Notify:
           Type: Api
@@ -237,7 +237,7 @@ Resources:
       Runtime: nodejs18.x
       Architectures:
       - x86_64
-      # Role: !Sub arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-LambdaExecutionRole
+      Role: !GetAtt LambdaExecutionRole.Arn
       Events:
         Notify:
           Type: Api
@@ -264,7 +264,7 @@ Resources:
       Runtime: nodejs18.x
       Architectures:
       - x86_64
-      # Role: !Sub arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-LambdaExecutionRole
+      Role: !GetAtt LambdaExecutionRole.Arn
       Events:
         Notify:
           Type: Api
@@ -291,7 +291,7 @@ Resources:
       Runtime: nodejs18.x
       Architectures:
       - x86_64
-      # Role: !Sub arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-LambdaExecutionRole
+      Role: !GetAtt LambdaExecutionRole.Arn
       Events:
         Notify:
           Type: Api
@@ -318,7 +318,7 @@ Resources:
       Runtime: nodejs18.x
       Architectures:
       - x86_64
-      # Role: !Sub arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-LambdaExecutionRole
+      Role: !GetAtt LambdaExecutionRole.Arn
       Events:
         Notify:
           Type: DynamoDB
