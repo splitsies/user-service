@@ -140,6 +140,10 @@ Resources:
                   - dynamodb:*
                 Resource: 
                   - !Sub arn:aws:dynamodb:${ResourceRegion}:${ResourceAccountId}:table/User
+                  - !Sub arn:aws:dynamodb:us-east-1:${ResourceAccountId}:table/${messageQueueResourceName}
+                  - !Sub arn:aws:dynamodb:us-west-1:${ResourceAccountId}:table/${messageQueueResourceName}/stream/*
+                  - !Sub arn:aws:dynamodb:us-east-1:${ResourceAccountId}:table/${messageQueueResourceName}
+                  - !Sub arn:aws:dynamodb:us-west-1:${ResourceAccountId}:table/${messageQueueResourceName}/stream/*
                   - !Sub arn:aws:dynamodb:${ResourceRegion}:${ResourceAccountId}:table/${messageQueueResourceName}
                   - !Sub ${MessageQueueStreamArn}
 
