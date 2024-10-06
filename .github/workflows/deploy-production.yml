@@ -13,7 +13,7 @@ jobs:
   deploy:
     name: deploy
     runs-on: ubuntu-latest
-    environment: production
+    # environment: production
     strategy:
       matrix:
         node-version: [18.x]
@@ -28,7 +28,7 @@ jobs:
     - name: Create Common Parameter Overrides
       run: | 
         params=""
-        params="Stage=staging ${params}"
+        params="Stage=production ${params}"
         params="dbRegion=us-east-1 ${params}"
         params="FirebaseApiKey=${{ secrets.FIREBASE_API_KEY_PRODUCTION }} ${params}"
         params="FirebaseAuthDomain=${{ secrets.FIREBASE_AUTH_DOMAIN_PRODUCTION }} ${params}"
@@ -64,12 +64,12 @@ jobs:
         --no-fail-on-empty-changeset \
         --parameter-overrides $PARAMETERS "MessageQueueStreamArn=${{ secrets.MESSAGE_QUEUE_ARN_PRODUCTION }}"
 
-    # - name: Deploy to us-west-1 (SAM Deploy)
-    #   run: |
-    #     PARAMETERS=$(cat parameters.cfg)
-    #     sam deploy --stack-name user-service \
-    #     --capabilities CAPABILITY_NAMED_IAM CAPABILITY_IAM \
-    #     --region us-west-1 \
-    #     --no-confirm-changeset \
-    #     --no-fail-on-empty-changeset \
-    #     --parameter-overrides $PARAMETERS "MessageQueueStreamArn=${{ secrets.MESSAGE_QUEUE_ARN_PRODUCTION_US_WEST_1 }}"
+    - name: Deploy to us-west-1 (SAM Deploy)
+      run: |
+        PARAMETERS=$(cat parameters.cfg)
+        sam deploy --stack-name user-service \
+        --capabilities CAPABILITY_NAMED_IAM CAPABILITY_IAM \
+        --region us-west-1 \
+        --no-confirm-changeset \
+        --no-fail-on-empty-changeset \
+        --parameter-overrides $PARAMETERS "MessageQueueStreamArn=${{ secrets.MESSAGE_QUEUE_ARN_PRODUCTION_US_WEST_1 }}"

@@ -66,12 +66,12 @@ jobs:
         --no-fail-on-empty-changeset \
         --parameter-overrides $PARAMETERS "MessageQueueStreamArn=${{ secrets.MESSAGE_QUEUE_ARN_STAGING }}"
 
-    # - name: Deploy to us-west-1 (SAM Deploy)
-    #   run: |
-    #     PARAMETERS=$(cat parameters.cfg)
-    #     sam deploy --stack-name user-service \
-    #     --capabilities CAPABILITY_NAMED_IAM CAPABILITY_IAM \
-    #     --region us-west-1 \
-    #     --no-confirm-changeset \
-    #     --no-fail-on-empty-changeset \
-    #     --parameter-overrides $PARAMETERS "MessageQueueStreamArn=${{ secrets.MESSAGE_QUEUE_ARN_STAGING_US_WEST_1 }}"
+    - name: Deploy to us-west-1 (SAM Deploy)
+      run: |
+        PARAMETERS=$(cat parameters.cfg)
+        sam deploy --stack-name user-service \
+        --capabilities CAPABILITY_NAMED_IAM CAPABILITY_IAM \
+        --region us-west-1 \
+        --no-confirm-changeset \
+        --no-fail-on-empty-changeset \
+        --parameter-overrides $PARAMETERS "MessageQueueStreamArn=${{ secrets.MESSAGE_QUEUE_ARN_STAGING_US_WEST_1 }}"
