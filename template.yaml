@@ -149,6 +149,7 @@ Resources:
   AuthenticateFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub ${AWS::StackName}-Authenticate
       CodeUri: src/functions/authenticate
       Handler: handler.main
       Runtime: nodejs18.x
@@ -177,6 +178,7 @@ Resources:
   FindUsersFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub ${AWS::StackName}-FindUsers
       CodeUri: src
       Handler: handler.main
       Runtime: nodejs18.x
@@ -204,6 +206,7 @@ Resources:
   CreateUserFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub ${AWS::StackName}-CreateUser
       CodeUri: src
       Handler: handler.main
       Runtime: nodejs18.x
@@ -231,6 +234,7 @@ Resources:
   CreateGuestUserFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub ${AWS::StackName}-CreateGuestUser
       CodeUri: src
       Handler: handler.main
       Runtime: nodejs18.x
@@ -258,6 +262,7 @@ Resources:
   DeleteUserFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub ${AWS::StackName}-DeleteUser
       CodeUri: src
       Handler: handler.main
       Runtime: nodejs18.x
@@ -285,6 +290,7 @@ Resources:
   GetUserByIdFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub ${AWS::StackName}-GetUserById
       CodeUri: src
       Handler: handler.main
       Runtime: nodejs18.x
@@ -312,6 +318,7 @@ Resources:
   PopulateJoinRequestFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub ${AWS::StackName}-PopulateJoinRequest
       CodeUri: src
       Handler: handler.main
       Runtime: nodejs18.x
