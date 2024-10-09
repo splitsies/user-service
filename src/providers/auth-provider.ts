@@ -20,7 +20,7 @@ export class AuthProvider implements IAuthProvider {
             logger.log("Creating emulated auth");
             initializeApp(firebaseConfig);
             this.auth = getAuth();
-            connectAuthEmulator(this.auth, process.env.FIREBASE_USER_EMULATOR_HOST);
+            connectAuthEmulator(this.auth, "http://docker.for.mac.localhost:9099/");
         }
     }
 
