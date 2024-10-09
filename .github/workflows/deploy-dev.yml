@@ -3,7 +3,6 @@ name: Deploy Dev
 on:
   pull_request:
     branches:
-      - main
       - releases/**
 
 jobs:
@@ -26,8 +25,6 @@ jobs:
         params=""
         params="Stage=dev ${params}"
         params="dbRegion=us-east-1 ${params}"
-        params="ResourceAccountId=${{ secrets.DEV_ACCOUNT_ID }} ${params}"
-        params="MessageQueueStreamArn=${{ secrets.MESSAGE_QUEUE_ARN_DEV_PR }} ${params}"
         params="FirebaseApiKey=${{ secrets.FIREBASE_API_KEY_DEV_PR }} ${params}"
         params="FirebaseAuthDomain=${{ secrets.FIREBASE_AUTH_DOMAIN_DEV_PR }} ${params}"
         params="FirebaseProjectId=${{ secrets.FIREBASE_PROJECT_ID_DEV_PR }} ${params}"
@@ -37,6 +34,7 @@ jobs:
         params="FirebaseMeasurementId=${{ secrets.FIREBASE_MEASUREMENT_ID_DEV_PR }} ${params}"
         params="FirebaseAdminCreds=${{ secrets.FIREBASE_ADMIN_CREDS_DEV_PR }} ${params}"
         params="ResourceAccountId=${{ secrets.DEV_ACCOUNT_ID }} ${params}"
+        params="OrganizationId=${{ secrets.AWS_ORGANIZATION_ID }} ${params}"
         echo $params > parameters.cfg
 
     - uses: actions/setup-python@v3
@@ -55,20 +53,18 @@ jobs:
       run: |
         PARAMETERS=$(cat parameters.cfg)
         sam deploy --stack-name user-service \
+        --capabilities CAPABILITY_NAMED_IAM CAPABILITY_IAM \
         --region us-east-1 \
         --no-confirm-changeset \
         --no-fail-on-empty-changeset \
-        --parameter-overrides $PARAMETERS
+        --parameter-overrides $PARAMETERS "MessageQueueStreamArn=${{ secrets.MESSAGE_QUEUE_ARN_DEV_PR }}"
 
-    - run: npm ci
-      working-directory: ./database
-      
-    - run: sam build
-      working-directory: ./database
-
-    - run: |
-        sam deploy --stack-name user-service-database \
+    - name: Deploy to us-west-1 (SAM Deploy)
+      run: |
+        PARAMETERS=$(cat parameters.cfg)
+        sam deploy --stack-name user-service \
+        --capabilities CAPABILITY_NAMED_IAM CAPABILITY_IAM \
+        --region us-west-1 \
         --no-confirm-changeset \
         --no-fail-on-empty-changeset \
-        --parameter-overrides "dbRegion=us-east-1" "StagingLambdaExecutionRoleArn=${{ secrets.STAGING_USER_SERVICE_LAMBDA_EXECUTION_ROLE_ARN }}"
-      working-directory: ./database
+        --parameter-overrides $PARAMETERS "MessageQueueStreamArn=${{ secrets.MESSAGE_QUEUE_ARN_US_WEST_1_DEV }}"

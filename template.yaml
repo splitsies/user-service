@@ -30,9 +30,6 @@ Parameters:
   dbEndpoint:
     Type: String
     Default: https://dynamodb.us-east-1.amazonaws.com/
-  dbTableName:
-    Type: String
-    Default: User
   MessageQueueStreamArn:
     Type: String
   messageQueueResourceName:
@@ -52,6 +49,20 @@ Parameters:
   DbSecretAccessKey:
     Type: String
     Default: ""
+  OrganizationId:
+    Type: String
+
+Conditions:
+  IsNotStaging:
+    !Not [!Equals [!Ref Stage, staging]]
+  IsUSEast1:
+    Fn::Equals:
+      - !Ref AWS::Region
+      - "us-east-1"
+  IsUSEast1AndNotStaging:
+    Fn::And:
+      - Condition: IsUSEast1
+      - Condition: IsNotStaging
 
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
@@ -81,10 +92,11 @@ Globals:
         DbAccessKeyId: !Ref DbAccessKeyId
         DbSecretAccessKey: !Ref DbSecretAccessKey
         messageQueueResourceName: !Ref messageQueueResourceName
-        MessageQueueStreamArn: !Ref MessageQueueStreamArn
         RtRegion: !Sub ${AWS::Region}
         AwsAccountId: !Sub ${AWS::AccountId}
         ResourceAccountId: !Ref ResourceAccountId
+        QueueRegion: !Sub ${AWS::Region}
+        QueueEndpoint: !Sub https://dynamodb.${AWS::Region}.amazonaws.com
 
 Resources:
   UserServiceApi:
@@ -96,6 +108,7 @@ Resources:
   LambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: !Sub ${AWS::StackName}-LambdaExecutionRole-${AWS::Region}
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -119,7 +132,7 @@ Resources:
               # Allow Lambda to receive SNS messages
               - Effect: Allow
                 Action: sns:Publish
-                Resource: !Sub arn:aws:sns:${AWS::Region}:${AWS::AccountId}:UserConnected
+                Resource: !Sub arn:aws:sns:*:${AWS::AccountId}:UserConnected
 
               # Permission for Lambda to read from DynamoDB table
               - Effect: Allow
@@ -127,12 +140,16 @@ Resources:
                   - dynamodb:*
                 Resource: 
                   - !Sub arn:aws:dynamodb:${ResourceRegion}:${ResourceAccountId}:table/User
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${messageQueueResourceName}
+                  - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${messageQueueResourceName}/stream/*
                   - !Sub arn:aws:dynamodb:${ResourceRegion}:${ResourceAccountId}:table/${messageQueueResourceName}
                   - !Sub ${MessageQueueStreamArn}
 
+  # Functions
   AuthenticateFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub ${AWS::StackName}-Authenticate
       CodeUri: src/functions/authenticate
       Handler: handler.main
       Runtime: nodejs18.x
@@ -161,6 +178,7 @@ Resources:
   FindUsersFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub ${AWS::StackName}-FindUsers
       CodeUri: src
       Handler: handler.main
       Runtime: nodejs18.x
@@ -188,6 +206,7 @@ Resources:
   CreateUserFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub ${AWS::StackName}-CreateUser
       CodeUri: src
       Handler: handler.main
       Runtime: nodejs18.x
@@ -215,6 +234,7 @@ Resources:
   CreateGuestUserFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub ${AWS::StackName}-CreateGuestUser
       CodeUri: src
       Handler: handler.main
       Runtime: nodejs18.x
@@ -242,6 +262,7 @@ Resources:
   DeleteUserFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub ${AWS::StackName}-DeleteUser
       CodeUri: src
       Handler: handler.main
       Runtime: nodejs18.x
@@ -269,6 +290,7 @@ Resources:
   GetUserByIdFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub ${AWS::StackName}-GetUserById
       CodeUri: src
       Handler: handler.main
       Runtime: nodejs18.x
@@ -296,6 +318,7 @@ Resources:
   PopulateJoinRequestFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub ${AWS::StackName}-PopulateJoinRequest
       CodeUri: src
       Handler: handler.main
       Runtime: nodejs18.x
@@ -325,5 +348,39 @@ Resources:
         External:
         - node_modules
         - aws-sdk
+
+
+  # Tables
+  UserTable:
+    Type: AWS::DynamoDB::Table
+    Condition: IsUSEast1AndNotStaging
+    Properties:
+      TableName: User
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      TableClass: STANDARD
+      ResourcePolicy:
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal: "*"
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+                - dynamodb:DeleteItem
+                - dynamodb:Query
+                - dynamodb:Scan
+              Resource: 
+                - !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/User
+              Condition:
+                StringEquals:
+                  aws:PrincipalOrgID: !Sub ${OrganizationId}
         
 
